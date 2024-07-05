@@ -1,5 +1,5 @@
 
-import { Loginuser, OTPData, googleUser, userObj } from '../../interfaces/Users'
+import { Loginuser, OTPData, forgotPassword, googleUser, userObj } from '../../interfaces/Users'
 import { userRepositoryInterface } from "../../interfaces/users/userRepository";
 import { Users } from "../../model/userModel";
 
@@ -11,7 +11,7 @@ export class userRepository implements userRepositoryInterface {
             
             const userDetails = await Users.findOne({ email: datas.email })
             console.log(userDetails);
-            return userDetails as userObj
+            return userDetails as userObj;
         } catch (error) {
             console.log(error);
             return null
@@ -29,7 +29,9 @@ export class userRepository implements userRepositoryInterface {
                 image: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg',
                 bio: "Hi Guys i am started Ninsta",
                 DOB: "",
-
+                Gender:"Default",
+                isBlocked:false,
+                
             })
             return createdUser as userObj
         } catch (error) {
@@ -42,7 +44,10 @@ export class userRepository implements userRepositoryInterface {
         try {
             const userDetails = await Users.findOne({ email: userEmail })
             console.log(userDetails);
-            return userDetails as userObj
+            if(userDetails){
+                return userDetails as userObj
+            }
+            return null
         } catch (error) {
             console.log(error);
             return null
@@ -50,8 +55,25 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
+    async forgotPassword(userDetail:forgotPassword){
+        try {
+            const {email,password} = userDetail
+            console.log(email,password)
+            const ChangedPassword = await Users.findOneAndUpdate({email:email},{$set:{
+                password:password,
+            }})
+            if(ChangedPassword){
+                return ChangedPassword
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async googleSignup(userData:googleUser){
         try {
+            console.log(userData);
             const createdUser = await Users.insertMany({
                 fullName: userData.fullName,
                 email: userData.email,
@@ -61,6 +83,8 @@ export class userRepository implements userRepositoryInterface {
                 image: userData.image,
                 bio: "Hi Guys i am started Ninsta",
                 DOB: "",
+                Gender:"Default",
+                isBlocked:false
             })
             if(createdUser){
                 return createdUser 
@@ -83,10 +107,11 @@ export class userRepository implements userRepositoryInterface {
     async OTPChecking(OtpDetails: OTPData): Promise<userObj | null> {
         try {
             const { email, otp } = OtpDetails
+            console.log(email,otp)
             const checkingOTP = await Users.findOne({ email: email })
             if (checkingOTP) {
-                if (checkingOTP?.OTP === otp) {
-                    return checkingOTP as userObj
+                if (checkingOTP?.OTP === otp.toString()) {
+                    return checkingOTP as userObj;
                 }
             }
             return null

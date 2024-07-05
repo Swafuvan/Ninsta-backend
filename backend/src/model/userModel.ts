@@ -10,6 +10,15 @@ const userScheme = new mongoose.Schema({
     bio : String,
     image : String,
     OTP: String ,
+    Gender:{
+        type:String,
+        enum:["Default","male","female","Others"],
+        default:"Default"
+    },
+    isBlocked:{
+        type:Boolean,
+        default:false
+    },
 }) 
 
 export const Users = mongoose.model("User",userScheme)

@@ -1,7 +1,7 @@
 
 import { userRepositoryInterface } from "../../interfaces/users/userRepository";
 import { userUsecaseInterface } from "../../interfaces/users/userUsecases";
-import { userObj, Loginuser, OTPData, googleUser } from '../../interfaces/Users'
+import { userObj, Loginuser, OTPData, googleUser, forgotPassword } from '../../interfaces/Users'
 import {sendOtpEmail,generateOtp} from '../../helper/nodemailer'
 import bcrypt from 'bcrypt'
 
@@ -56,10 +56,28 @@ export class userUsecase implements userUsecaseInterface {
     async getUser(userEmail: String): Promise<userObj | null> {
         return await this.userRepository.getUser(userEmail)
     }
+
+    async forgotPassword(userDetail:forgotPassword){
+        try {
+            userDetail.password = await bcrypt.hash(userDetail.password, 12)
+            const ChangedData = await this.userRepository.forgotPassword(userDetail)
+            if(ChangedData){
+                return ChangedData
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     
     async GoogleSignup(UserData:googleUser){
         try {
+            UserData.password = await bcrypt.hash(UserData.password, 12)
             const userResult = await this.userRepository.googleSignup(UserData)
+
+            console.log(userResult);
+            
             return userResult
         } catch (error) {
             console.log(error);

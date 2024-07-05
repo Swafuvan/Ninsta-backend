@@ -1,4 +1,4 @@
-import { Loginuser, userObj,OTPData, googleUser} from "../Users"
+import { Loginuser, userObj,OTPData, googleUser, forgotPassword} from "../Users"
 
 // this interface for userRepository
 export interface userRepositoryInterface{
@@ -8,4 +8,6 @@ export interface userRepositoryInterface{
     OTPAddDatabase(email:string,otp:string):Promise<boolean>
     OTPChecking(OTPData):Promise<userObj | null>
     googleSignup(userData:googleUser)
+    forgotPassword(userDetail:forgotPassword)
+
 }

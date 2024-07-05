@@ -1,114 +1,115 @@
-import {NextFunction, Request,Response} from 'express' ;
-import { userUsecaseInterface,  } from '../../interfaces/users/userUsecases'
+import { NextFunction, Request, Response } from 'express';
+import { userUsecaseInterface, } from '../../interfaces/users/userUsecases'
+import { generateToken, getPayload } from '../../helper/JWT';
 
 export class UserController {
-    constructor( private userUsecase : userUsecaseInterface ) {}
+    constructor(private userUsecase: userUsecaseInterface) { }
 
-    async loginUser(req:Request,res:Response,next:NextFunction) {
+    
+
+    async loginUser(req: Request, res: Response, next: NextFunction) {
         try {
             let datas = req.body
             console.log(datas);
             const userDetails = await this.userUsecase.loginUser(datas)
-            if(userDetails){                
-               return res.status(200).json({userDetails})
+            if (userDetails) {
+                const token= generateToken(userDetails.email)
+                return res.status(200).json({ userDetails:userDetails,JWTtoken:token })
             }
-            res.status(400).json({message:"User Not Found"})
+            res.status(400).json({ message: "User Not Found" })
         } catch (error) {
             console.log(error);
             next(error)
         }
     }
 
-    async signupUser(req: Request, res: Response,next:NextFunction) {
+    async signupUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const details =req.body
+            const details = req.body
             console.log(req.body)
-            const userDetails = await this.userUsecase.signupUser(details) 
-            res.status(200).json({userDetails,valid:true})
+            const userDetails = await this.userUsecase.signupUser(details);
+            if (userDetails) {
+                const token= generateToken(userDetails.email)
+                res.status(200).json({ userDetails:userDetails,JWTtoken:token })
+            }
+            res.status(400).json({ message:"Signup is Not Complete", valid: false })
         } catch (error) {
             console.log(error);
             next(error)
         }
     }
 
-   async googleSignup(req:Request,res:Response,next:NextFunction){
-    try {
-        const userDetails = req.body
-        const UserResponse = await this.userUsecase.GoogleSignup(userDetails)
-        if(UserResponse){
-            return res.status(200).json({userData:UserResponse})
-        }
-        res.status(404).json({message:"Failed"})
-
-    } catch (error) {
-        console.log(error);
-        
-    }
-   }
-
-    async getUser(req:Request,res:Response){
+    async googleSignup(req: Request, res: Response, next: NextFunction) {
         try {
-            let userEmail = req.body.email
-            let users = await this.userUsecase.getUser(userEmail);
-            if(users){
-                res.status(200).json({users})
+            const userDetails = req.body
+            const UserResponse = await this.userUsecase.GoogleSignup(userDetails)
+            console.log(UserResponse);
+            if (UserResponse) {
+                const token= generateToken(UserResponse.email)
+                return res.status(200).json({ userData: UserResponse,JWTtoken:token })
             }
-            res.status(400).json({message:'User Not Found'});
-            return;
+            return res.status(404).json({ message: "Failed" })
         } catch (error) {
             console.log(error);
-        }
-    }
-
-
-    async UserSignupOTP(req:Request,res:Response){
-        try {
-            let {email,otp} = req.body
-            console.log(email,otp);
-            const userData = await this.userUsecase.OtpVerification(req.body)
-            console.log(userData);
-            if(userData){
-
-            }
-            
-            // let userOTP = await sendOtpEmail(userData,otp) 
-            // if(users){
-            //     res.status(200).json({users})
-            // }
-            // res.status(400).json({message:'User Not Found'});
-            // return;
-        } catch (error) {
-            console.log(error);
-        }
-    }    
-
-    async UserHome (req:Request,res:Response) {
-        try {
-            res.send('hello Social Media Users')
-        }catch(err){
-            console.log(err);
-            
-        }
-    }
-
-    async ResendOtp(req:Request,res:Response){
-        try {
-            
-        } catch (error) {
-            console.log(error);
-            
-        }
-    }
-
-    async Logout (req: Request,res:Response){
-        try {
-            res.send('Logout succefully')
-        } catch (error) {
-            console.log(error);
-            
         }
     }
     
+
+
+    async getUser(req: Request, res: Response) {
+        try {
+           const user = getPayload(req)
+           console.log(user);
+            let users = await this.userUsecase.getUser(user?.email+'');
+            console.log(users);
+            if (users) {
+                return res.status(200).json({ users:users })
+            }
+            return res.status(400).json({ message: 'User Not Found' });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    async ForgotPassword(req:Request,res:Response){
+        try {
+            console.log(req.body)
+            const ChangedPassword = await this.userUsecase.forgotPassword(req.body)
+            if(ChangedPassword){
+                return res.status(200).json({ChangedPassword:ChangedPassword})
+            }
+            return res.status(401).json({message:"User Not Found This Email"})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    async UserSignupOTP(req: Request, res: Response) {
+        try {
+            let { email, otp } = req.body
+            console.log(email, otp);
+            const userData = await this.userUsecase.OtpVerification(req.body)
+            if (userData) {
+                return res.status(200).json({userData:userData})
+            }
+            return res.status(401).json({message:"User Not Found",userData:userData})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    async ResendOtp(req: Request, res: Response) {
+        try {
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+
 }
 
 

@@ -8,7 +8,10 @@ export interface userObj{
     image:String;
     DOB :String;
     bio:String
+    Gender:string,
+    isBlocked:boolean,
 }
+
 
 export interface Loginuser{
     email:string;
@@ -34,6 +37,12 @@ export interface googleUser{
     username:string,
     fullName:string,
     image:string
+}
+
+export interface forgotPassword{
+    email:string,
+    password:string,
+    confirmPassword:string,
 }
 
 

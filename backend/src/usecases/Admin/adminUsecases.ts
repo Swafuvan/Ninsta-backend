@@ -1,6 +1,6 @@
 import { adminRepositoryInterface } from "../../interfaces/admin/adminRepository";
 import { AdminUsecasesInterface } from "../../interfaces/admin/adminUseCases";
-import { Loginuser } from "../../interfaces/Users";
+import { Loginuser, userObj } from "../../interfaces/Users";
 import bcrypt from 'bcrypt'
 
 
@@ -33,6 +33,32 @@ export class adminUseCases implements AdminUsecasesInterface {
             return null
         } catch (error) {
 
+        }
+    }
+
+    async UserDetails(user: userObj) {
+        try {
+            const UserDetailsData = await this.adminRepository.UserDetails(user)
+            if (UserDetailsData) {
+                return UserDetailsData
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserBlocked(userEmail: any,isBlocked:string) {
+        try {
+            const Blocked = isBlocked === "false" ? true : false;
+            console.log(userEmail, isBlocked, '111111111111111111111111111')
+            const UserBlocked = await this.adminRepository.UserBlocked(userEmail,Blocked)
+            if (UserBlocked) {
+                return UserBlocked
+            }
+            return null
+        } catch (error) {
+            console.log(error);
         }
     }
 }

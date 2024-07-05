@@ -1,4 +1,4 @@
-import { Loginuser, OTPData, googleUser, userObj } from "../Users"
+import { Loginuser, OTPData, forgotPassword, googleUser, userObj } from "../Users"
 
 export interface userUsecaseInterface{
     getUser(userEmail:string):Promise<userObj | null>
@@ -7,4 +7,5 @@ export interface userUsecaseInterface{
     OtpVerification(OtpDetails:OTPData):Promise<userObj | null>
     OTPAddDatabase(email:string,otp:string):Promise<boolean>
     GoogleSignup(userData:googleUser)
+    forgotPassword(userDetail:forgotPassword)
 }

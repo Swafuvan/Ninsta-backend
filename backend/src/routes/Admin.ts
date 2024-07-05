@@ -12,6 +12,10 @@ adminrouter.get('/', adminController.AdminHome.bind(adminController));
 
 adminrouter.get('/userManagement', adminController.getUser.bind(adminController));
 
-adminrouter.post('/login',adminController.AdminLogin.bind(adminController))
+adminrouter.post('/login',adminController.AdminLogin.bind(adminController));
+
+adminrouter.post('/UserData',adminController.UserDetails.bind(adminController));
+
+adminrouter.get('/UserBlock',adminController.UserBlocking.bind(adminController));
 
 export default adminrouter

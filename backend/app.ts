@@ -1,15 +1,25 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors'
+import session from 'express-session'
 import  {ConnectDB}  from './src/database';
-const app = express();
-
+import morgan from "morgan"
 import userRouter from './src/routes/Users';
 import adminRouter from './src/routes/Admin';
+import dotenv from 'dotenv';
+dotenv.config()
 
-app.use(cors());
+const app = express();
+
+app.use(morgan("dev"))
+app.use(cors({
+    origin:"http://localhost:3000",
+    credentials:true
+}));
+
 
 app.use(express.json());
+
 
 app.use('/',userRouter);
 app.use('/admin',adminRouter);
