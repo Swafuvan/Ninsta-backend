@@ -6,6 +6,10 @@ const CommentSchema = new mongoose.Schema({
         ref: 'Users',
         required: true
     },
+    createdAt:{
+        type: Date,
+        default: Date.now()
+    },
     comment: {
         type: String,
         trim: true,
@@ -29,8 +33,8 @@ const PostSchema = new mongoose.Schema({
         maxlength: 2000
     },
     likes: {
-        type: Number,
-        default: 0
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
     },
     comments: {
         type: [CommentSchema],

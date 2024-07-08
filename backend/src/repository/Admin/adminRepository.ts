@@ -45,6 +45,19 @@ export class adminRepository implements adminRepositoryInterface {
         }
     }
 
+    async adminDetails(email: string) {
+        try {
+            const adminData = await Users.findOne({email:email})
+            console.log(adminData)
+            if(adminData){
+                return adminData
+            }
+            return null
+        }catch(error){
+            console.log(error)
+        }
+    }
+
     async UserDetails(user:userObj){
         try {
             const UserDetails = await Users.findOneAndUpdate({_id:user.email},{$set:{

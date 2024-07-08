@@ -6,14 +6,13 @@ export class UserController {
     constructor(private userUsecase: userUsecaseInterface) { }
 
     
-
     async loginUser(req: Request, res: Response, next: NextFunction) {
         try {
             let datas = req.body
             console.log(datas);
             const userDetails = await this.userUsecase.loginUser(datas)
             if (userDetails) {
-                const token= generateToken(userDetails.email)
+                const token= generateToken(userDetails.email,userDetails.isAdmin)
                 return res.status(200).json({ userDetails:userDetails,JWTtoken:token })
             }
             res.status(400).json({ message: "User Not Found" })
@@ -29,7 +28,7 @@ export class UserController {
             console.log(req.body)
             const userDetails = await this.userUsecase.signupUser(details);
             if (userDetails) {
-                const token= generateToken(userDetails.email)
+                const token= generateToken(userDetails.email,userDetails.isAdmin)
                 res.status(200).json({ userDetails:userDetails,JWTtoken:token })
             }
             res.status(400).json({ message:"Signup is Not Complete", valid: false })
@@ -45,7 +44,7 @@ export class UserController {
             const UserResponse = await this.userUsecase.GoogleSignup(userDetails)
             console.log(UserResponse);
             if (UserResponse) {
-                const token= generateToken(UserResponse.email)
+                const token= generateToken(UserResponse.email,UserResponse.isAdmin)
                 return res.status(200).json({ userData: UserResponse,JWTtoken:token })
             }
             return res.status(404).json({ message: "Failed" })
@@ -54,7 +53,21 @@ export class UserController {
         }
     }
     
-
+    async UserDetails(req:Request,res:Response){
+        try {
+            const user = getPayload(req)
+            const userData = await this.userUsecase.getUser(user?.email);
+            if (userData?.isBlocked) {
+                return res.status(217).json({message:'User Blocked'})
+            }
+            if(userData){
+                return res.status(200).json({ userData:userData })
+            }
+            return res.status(400).json({ message: "User Not Found" })
+        } catch (error) {
+            console.log(error); 
+        }
+    }
 
     async getUser(req: Request, res: Response) {
         try {

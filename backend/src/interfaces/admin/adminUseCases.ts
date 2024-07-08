@@ -5,4 +5,5 @@ export interface AdminUsecasesInterface{
     UserManagement():Promise<userObj[]>
     UserDetails(user:userObj)
     UserBlocked(email:string,isBlock:string)
+    adminDetails(email:string);
 }

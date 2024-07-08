@@ -18,4 +18,6 @@ adminrouter.post('/UserData',adminController.UserDetails.bind(adminController));
 
 adminrouter.get('/UserBlock',adminController.UserBlocking.bind(adminController));
 
+adminrouter.get('/adminData',adminController.adminDetails.bind(adminController));
+
 export default adminrouter

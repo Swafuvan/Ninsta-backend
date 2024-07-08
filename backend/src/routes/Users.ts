@@ -10,6 +10,8 @@ const userRouter = express.Router();
 
 userRouter.get('/',verifyToken,userController.getUser.bind(userController));
 
+userRouter.get('/userData',verifyToken,userController.UserDetails.bind(userController))
+
 userRouter.post('/signup', userController.signupUser.bind(userController));
 
 userRouter.post('/login', userController.loginUser.bind(userController));

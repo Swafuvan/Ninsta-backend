@@ -36,6 +36,18 @@ export class adminUseCases implements AdminUsecasesInterface {
         }
     }
 
+    async adminDetails(email: string) {
+        try {
+            const adminDetailsData = await this.adminRepository.adminDetails(email)
+            if (adminDetailsData) {
+                return adminDetailsData
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async UserDetails(user: userObj) {
         try {
             const UserDetailsData = await this.adminRepository.UserDetails(user)

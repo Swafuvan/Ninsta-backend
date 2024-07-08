@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { userObj } from '../../interfaces/Users';
 import { AdminUsecasesInterface } from '../../interfaces/admin/adminUseCases';
+import { adminVerfication, generateToken, getPayload } from '../../helper/JWT';
 
 
 export class AdminControllers {
@@ -13,7 +14,7 @@ export class AdminControllers {
             }
             res.status(400).json({ message: "NO User Details" })
         } catch (error) {
-
+ 
         }
     }
 
@@ -31,9 +32,10 @@ export class AdminControllers {
             const details = req.body;
             const response = await this.adminUseCases.AdminLogin(details)
             if (response === null) {
-                return res.status(400).json({ message: "User Not Autherised" })
+                return res.status(200).json({status:false, message: "User Not Autherised" })
             }
-            res.status(200).json({ response })
+            const adminToken = generateToken(response.email,response.isAdmin)
+            res.status(200).json({status:true, response:response,adminToken })
         } catch (error) {
             console.log(error);
         }
@@ -48,6 +50,20 @@ export class AdminControllers {
                 return res.status(200).json({ userDetails: userDetails })
             }
             res.status(400).json({ message: "NO User Details" })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async adminDetails(req:Request,res:Response){
+        try {
+            const admin = getPayload(req)
+            console.log(admin);
+            const adminData = await this.adminUseCases.adminDetails(admin?.email)
+            if (adminData) {
+                return res.status(200).json({ adminData: adminData })
+            }
+            return res.status(205).json({ message: "NO Admin Details" })
         } catch (error) {
             console.log(error)
         }

@@ -2,8 +2,19 @@ import mongoose from "mongoose"
 
 const userScheme = new mongoose.Schema({
     fullName:String,
-    email:String,
-    username:String,
+    email:{
+        type:String,
+        unique:true,
+        trim:true
+    },
+    username:{
+        type:String,
+        unique:true,
+        lowercase:true,
+        trim:true,
+        minlength:3,
+        maxlength:20
+    },
     password:String,
     isAdmin:Boolean,
     DOB : String,
