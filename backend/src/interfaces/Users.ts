@@ -12,6 +12,10 @@ export interface userObj{
     isBlocked:boolean,
 }
 
+export interface userDetail extends userObj{
+    _id:string;
+}
+
 
 export interface Loginuser{
     email:string;

@@ -1,42 +1,39 @@
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv'
+dotenv.config()
 
-(async function() {
+interface ImageData {
+    filepath: string;
+}
 
-    // Configuration
-    cloudinary.config({ 
-        cloud_name: 'dz9t5m33j', 
-        api_key: '944943924321977', 
-        api_secret: '<your_api_secret>' // Click 'View Credentials' below to copy your API secret
-    });
-    
-    // Upload an image
-     const uploadResult = await cloudinary.uploader
-       .upload(
-           'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
-               public_id: 'shoes',
-           }
-       )
-       .catch((error) => {
-           console.log(error);
-       });
-    
-    console.log(uploadResult);
-    
-    // Optimize delivery by resizing and applying auto-format and auto-quality
-    const optimizeUrl = cloudinary.url('shoes', {
-        fetch_format: 'auto',
-        quality: 'auto'
-    });
-    
-    console.log(optimizeUrl);
-    
-    // Transform the image: auto-crop to square aspect_ratio
-    const autoCropUrl = cloudinary.url('shoes', {
-        crop: 'auto',
-        gravity: 'auto',
-        width: 500,
-        height: 500,
-    });
-    
-    console.log(autoCropUrl);    
-})();
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+
+
+export const uploadImage = async (imageData: ImageData, folder: string): Promise<any> => {
+    const { filepath } = imageData;
+    console.log(filepath)
+    try {
+        return await cloudinary.uploader.upload(filepath, {
+            resource_type: "auto",
+            folder
+        });
+    } catch (error) {
+        console.error('Error uploading image to Cloudinary:', error);
+    }
+}
+
+export const uploadImages = async (imagePaths: ImageData[], folder: string): Promise<any[]> => {
+    // console.log(imagePaths);
+    const uploadPromises = imagePaths.map( async (path) => (await uploadImage(path, folder))?.secure_url);
+    try {
+        return await Promise.all(uploadPromises);
+    } catch (error) {
+        console.error('Error uploading images to Cloudinary:', error);
+        throw error;
+    }
+};

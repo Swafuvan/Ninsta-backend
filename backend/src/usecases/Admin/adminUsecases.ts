@@ -7,6 +7,37 @@ import bcrypt from 'bcrypt'
 
 export class adminUseCases implements AdminUsecasesInterface {
     constructor(private adminRepository: adminRepositoryInterface) { }
+    async postReportAction(postData: any) {
+        try {
+            const responseData = await this.adminRepository.postReportAction(postData)
+            if(responseData){
+                return responseData
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async userFindById(userId: string) {
+        try {
+            const userDetails = await this.adminRepository.userFindById(userId)
+            if (userDetails) {
+                return userDetails
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async userPostReport() {
+        try {
+            const userPostReport = await this.adminRepository.userPostReport()
+            if (userPostReport) {
+                return userPostReport
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async AdminLogin(data: Loginuser) {
         try {

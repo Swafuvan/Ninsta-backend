@@ -30,6 +30,16 @@ const userScheme = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    following:{
+        type:[String],
+        default:[]
+    },
+    followers:{
+        type:[String],
+        default:[]
+    }
+},{
+    timestamps: true
 }) 
 
 export const Users = mongoose.model("User",userScheme)

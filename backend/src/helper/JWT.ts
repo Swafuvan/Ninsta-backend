@@ -20,11 +20,8 @@ export const verifyToken: Middleware = (req, res, next) => {
     const token = req.headers["authorization"]?.replace('Bearer ', '');
 
     if (!token) { return res.status(401).json({ message: 'Access denied. No token provided.' }) }
-    console.log(token);
-
     try {
         const decoded = Jwt.verify(token, process.env.JWT_SECRET || "") as JwtPayload & JWTUserData
-        console.log(decoded);
         req.user = decoded;
         next();
 
@@ -38,7 +35,6 @@ export const adminVerfication: Middleware = (req,res,next) =>{
     const token = req.headers["authorization"]?.replace('Bearer ', '');
 
     if (!token) { return res.status(401).json({ message: 'Access denied. No token provided.' }) }
-    console.log(token);
 
     try {
         const decoded = Jwt.verify(token, process.env.JWT_SECRET || "") as JwtPayload & JWTUserData

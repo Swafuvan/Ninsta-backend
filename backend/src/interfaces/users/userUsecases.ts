@@ -8,4 +8,6 @@ export interface userUsecaseInterface{
     OTPAddDatabase(email:string,otp:string):Promise<boolean>
     GoogleSignup(userData:googleUser)
     forgotPassword(userDetail:forgotPassword)
+    userFindById(userid:string)
+    ResendOtp(email:string)
 }

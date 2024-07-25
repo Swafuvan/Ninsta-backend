@@ -5,5 +5,9 @@ export interface adminRepositoryInterface{
     Usermanagement()
     UserDetails(user:userObj)
     UserBlocked(Userdata:string,isBlock:boolean)
-    adminDetails(email:string)
+    adminDetails(email:string);
+    userPostReport()
+    userFindById(userId:string);
+    postReportAction(postData:any)
+
 }

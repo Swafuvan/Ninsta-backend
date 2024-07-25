@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { userUsecaseInterface, } from '../../interfaces/users/userUsecases'
 import { generateToken, getPayload } from '../../helper/JWT';
+import { generateOtp } from '../../helper/nodemailer';
 
 export class UserController {
     constructor(private userUsecase: userUsecaseInterface) { }
@@ -22,6 +23,19 @@ export class UserController {
         }
     }
 
+    async UserfindById(req:Request,res:Response){
+        try {
+            const user = req.query.id
+            const userDetail = await this.userUsecase.userFindById(user+'')
+            if(userDetail){
+                return res.status(200).json({userDetail:userDetail})
+            }
+            res.status(205).json({message:'User Not Found'})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async signupUser(req: Request, res: Response, next: NextFunction) {
         try {
             const details = req.body
@@ -29,7 +43,7 @@ export class UserController {
             const userDetails = await this.userUsecase.signupUser(details);
             if (userDetails) {
                 const token= generateToken(userDetails.email,userDetails.isAdmin)
-                res.status(200).json({ userDetails:userDetails,JWTtoken:token })
+                return res.status(200).json({ userDetails:userDetails,JWTtoken:token })
             }
             res.status(400).json({ message:"Signup is Not Complete", valid: false })
         } catch (error) {
@@ -106,7 +120,7 @@ export class UserController {
             if (userData) {
                 return res.status(200).json({userData:userData})
             }
-            return res.status(401).json({message:"User Not Found",userData:userData})
+            return res.status(203).json({message:"Enter the correct OTP",userData:userData})
         } catch (error) {
             console.log(error);
         }
@@ -115,7 +129,12 @@ export class UserController {
 
     async ResendOtp(req: Request, res: Response) {
         try {
-
+            let { email } = req.query
+            const otpResend = await this.userUsecase.ResendOtp(email+'')
+            if(otpResend){
+                return res.status(200).json({message:"Otp Resend Successfully"})
+            }
+            return res.status(205).json({message:"User Not Found"})
         } catch (error) {
             console.log(error);
 

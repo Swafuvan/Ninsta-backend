@@ -9,5 +9,6 @@ export interface userRepositoryInterface{
     OTPChecking(OTPData):Promise<userObj | null>
     googleSignup(userData:googleUser)
     forgotPassword(userDetail:forgotPassword)
-
+    userFindById(userid:string)
+    
 }

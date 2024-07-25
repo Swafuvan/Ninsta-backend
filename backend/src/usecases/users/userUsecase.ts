@@ -15,7 +15,9 @@ export class userUsecase implements userUsecaseInterface {
             let result = await this.userRepository.loginUser(datas);
             if (result) {
                 let compared = await bcrypt.compare(datas.password,result?.password);
+
                 if (compared) {
+                    console.log('password match');
                     return result
                 }
             }
@@ -29,6 +31,15 @@ export class userUsecase implements userUsecaseInterface {
     async OTPAddDatabase(email:string,OTP:string){
         const DataAdd = await this.userRepository.OTPAddDatabase(email,OTP)
         return DataAdd
+    }
+
+    async userFindById(userid:string){
+        try {
+            const Userdata = await this.userRepository.userFindById(userid)
+            return Userdata
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     async signupUser(details: userObj): Promise<userObj | null> {
@@ -50,6 +61,21 @@ export class userUsecase implements userUsecaseInterface {
         } catch (error) {
             console.log(error);
             return null
+        }
+    }
+
+    async ResendOtp(email:string){
+        try {
+            console.log(email)
+            const otpResended = await generateOtp()
+            console.log('New OTP is:'+otpResended)
+            const otpSendingEmail = await sendOtpEmail(email,otpResended)
+            const otpComplete = await this.OTPAddDatabase(email,otpResended)
+            if(otpComplete){
+                return otpComplete
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 

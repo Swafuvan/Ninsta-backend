@@ -4,6 +4,17 @@ import { userRepositoryInterface } from "../../interfaces/users/userRepository";
 import { Users } from "../../model/userModel";
 
 export class userRepository implements userRepositoryInterface {
+    async userFindById(userid: string) {
+        try {
+            const userDetails = await Users.findById(userid)
+            if(userDetails){
+                return userDetails
+            }
+            return null
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     async loginUser(datas: Loginuser): Promise<userObj | null> {
         try {
@@ -31,6 +42,8 @@ export class userRepository implements userRepositoryInterface {
                 DOB: "",
                 Gender:"Default",
                 isBlocked:false,
+                following:[],
+                followers:[]
                 
             })
             return createdUser as userObj
@@ -84,7 +97,9 @@ export class userRepository implements userRepositoryInterface {
                 bio: "Hi Guys i am started Ninsta",
                 DOB: "",
                 Gender:"Default",
-                isBlocked:false
+                isBlocked:false,
+                following:[],
+                followers:[]
             })
             if(createdUser){
                 return createdUser 
