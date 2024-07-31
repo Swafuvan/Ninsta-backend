@@ -10,5 +10,6 @@ export interface userRepositoryInterface{
     googleSignup(userData:googleUser)
     forgotPassword(userDetail:forgotPassword)
     userFindById(userid:string)
-    
+    AllUserDetails(userid:string);
+    userSearch(search:string);
 }

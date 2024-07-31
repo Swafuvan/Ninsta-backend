@@ -39,7 +39,7 @@ export class PostController {
     async SaveUserPosts(req: Request, res: Response) {
         try {
             const postData = req.body
-            console.log(postData)
+            // console.log(postData)
             const SavePost = await this.PostUsecases.savePosts(postData)
             if (SavePost) {
                 return res.status(200).json({ SavePost: SavePost })
@@ -50,10 +50,35 @@ export class PostController {
         }
     }
 
+    async ReplyComments(req:Request,res:Response){
+        try {
+            const {data,userId,reply} = req.body;
+            const CommentRes = await this.PostUsecases.CommentReplies(data,userId,reply);
+            if (CommentRes) {
+                return res.status(200).json({ CommentRes: CommentRes })
+            }
+            res.status(205).json({ message: 'Failed to Add Reply' })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async CommentLikes(req:Request,res:Response){
+        try {
+            const {comment,userId} = req.body
+            const CommentRes = await this.PostUsecases.CommentLike(comment,userId)
+            if (CommentRes) {
+                return res.status(200).json({ CommentRes: CommentRes })
+            }
+            res.status(205).json({ message: 'Failed to Like Comment' })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async LikePosts(req: Request, res: Response) {
         try {
             const { userId, post } = req.body
-            console.log(userId, post._id)
             const PostLiked = await this.PostUsecases.PostLikes(userId, post._id)
             if (PostLiked) {
                 return res.status(200).json({ PostLiked: PostLiked })
@@ -104,7 +129,6 @@ export class PostController {
     async AllComment(req: Request, res: Response) {
         try {
             const postId = req.query.postId
-            console.log(postId)
             const Comments = await this.PostUsecases.allComments(postId + '')
 
             if (Comments) {
@@ -122,7 +146,6 @@ export class PostController {
             console.log(report, postData)
             const reportedPost = await this.PostUsecases.ReportedPosts(report, postData)
             if (reportedPost) {
-                console.log(reportedPost)
                 return res.status(200).json({ reportedPost: reportedPost })
             }
             res.status(205).json({ message: "Failed to Report Post" })
@@ -134,7 +157,6 @@ export class PostController {
     async AllUserPosts(req: Request, res: Response) {
         try {
             const userId = req.query.userId
-            console.log(userId)
             const UserPostData = await this.PostUsecases.AllUserPost(userId + '');
             if (UserPostData) {
                 return res.status(200).json({ UserPostData: UserPostData })

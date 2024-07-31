@@ -22,9 +22,13 @@ postrouter.get('/allComment',verifyToken,postControllers.AllComment.bind(postCon
 
 postrouter.post('/postReports',verifyToken,postControllers.PostReports.bind(postControllers));
 
-postrouter.get('/userAllPost',verifyToken,postControllers.AllUserPosts.bind(postControllers));
+postrouter.get('/userAllPost',verifyToken,postControllers.AllUserPosts.bind(postControllers)); 
 
 postrouter.post('/savePosts',verifyToken,postControllers.SaveUserPosts.bind(postControllers));
+
+postrouter.post('/commentReply',verifyToken,postControllers.ReplyComments.bind(postControllers));
+
+postrouter.post('/commentLike',verifyToken,postControllers.CommentLikes.bind(postControllers));
 
 postrouter.get('/AllPostReports',verifyToken,postControllers.AllPostReports.bind(postControllers));
 

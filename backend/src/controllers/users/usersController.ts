@@ -111,6 +111,20 @@ export class UserController {
         }
     }
 
+    async AllUserDetails(req:Request,res:Response){
+        try {
+            const {userId} = req.query 
+            console.log(userId)
+            console.log(typeof userId)
+            const UserDetails = await this.userUsecase.AllUserDetails(userId+'');
+            if(UserDetails){
+                return res.status(200).json({UserDetails:UserDetails})
+            }
+            return res.status(205).json({message:'No User Found'})
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async UserSignupOTP(req: Request, res: Response) {
         try {
@@ -126,6 +140,19 @@ export class UserController {
         }
     }
 
+    async userSearchDetails(req:Request,res:Response){
+        try {
+            const { search } = req.query
+            console.log(search)
+            const searchResult = await this.userUsecase.userSearch(search+'');
+            if(searchResult){
+                return res.status(200).json({searchResult:searchResult});
+            }
+            return res.status(205).json({message:'No User Found'});
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async ResendOtp(req: Request, res: Response) {
         try {

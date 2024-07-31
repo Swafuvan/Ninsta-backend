@@ -23,6 +23,10 @@ userRouter.get('/resendOtp',userController.ResendOtp.bind(userController));
 
 userRouter.get('/user',verifyToken,userController.UserfindById.bind(userController));
 
+userRouter.get('/AllUsers',verifyToken,userController.AllUserDetails.bind(userController));
+
+userRouter.get('/userSearch',verifyToken,userController.userSearchDetails.bind(userController));
+
 userRouter.post('/forgotPassword',userController.ForgotPassword.bind(userController))
 
 userRouter.post('/googleSignup',userController.googleSignup.bind(userController))

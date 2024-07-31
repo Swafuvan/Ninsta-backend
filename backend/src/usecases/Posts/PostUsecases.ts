@@ -82,6 +82,28 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
+    async CommentReplies(data:any,userId:string,reply:string){
+        try {
+            const commentReply = await this.postRepository.CommentReplies(data,userId,reply);
+            if(commentReply){
+                return commentReply
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async CommentLike(comment:any,userId:string){
+        try {
+            const CommentLike = await this.postRepository.CommentLike(comment,userId)
+            if(CommentLike){
+                return CommentLike
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     async AllUserPost(userid:string){
         try {

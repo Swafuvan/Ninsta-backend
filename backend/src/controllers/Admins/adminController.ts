@@ -99,6 +99,7 @@ export class AdminControllers {
             const admin = getPayload(req)
             console.log(admin);
             const adminData = await this.adminUseCases.adminDetails(admin?.email)
+            console.log(adminData)
             if (adminData) {
                 return res.status(200).json({ adminData: adminData })
             }

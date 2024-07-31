@@ -1,4 +1,5 @@
 
+import mongoose from 'mongoose';
 import { Loginuser, OTPData, forgotPassword, googleUser, userObj } from '../../interfaces/Users'
 import { userRepositoryInterface } from "../../interfaces/users/userRepository";
 import { Users } from "../../model/userModel";
@@ -21,11 +22,38 @@ export class userRepository implements userRepositoryInterface {
             console.log(datas.email,datas.password);
             
             const userDetails = await Users.findOne({ email: datas.email })
-            console.log(userDetails);
             return userDetails as userObj;
         } catch (error) {
             console.log(error);
             return null
+        }
+    }
+
+    async userSearch(search:string){
+        try {
+            const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+        
+        const searchResult = await Users.find({
+            username: { $regex: escapedSearch, $options: 'i' }
+        });
+        if(searchResult){
+            console.log(searchResult)
+            return searchResult
+        }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async AllUserDetails(userId:string){
+        try {
+            console.log(userId,'0000000000000000000000000000000')
+            const userData = await Users.find({_id:{$ne:userId},isAdmin:false});
+            if(userData){
+                return userData
+            } 
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -56,7 +84,6 @@ export class userRepository implements userRepositoryInterface {
     async getUser(userEmail: String): Promise<userObj | null> {
         try {
             const userDetails = await Users.findOne({ email: userEmail })
-            console.log(userDetails);
             if(userDetails){
                 return userDetails as userObj
             }
@@ -71,7 +98,6 @@ export class userRepository implements userRepositoryInterface {
     async forgotPassword(userDetail:forgotPassword){
         try {
             const {email,password} = userDetail
-            console.log(email,password)
             const ChangedPassword = await Users.findOneAndUpdate({email:email},{$set:{
                 password:password,
             }})

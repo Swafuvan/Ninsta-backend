@@ -9,5 +9,7 @@ export interface userUsecaseInterface{
     GoogleSignup(userData:googleUser)
     forgotPassword(userDetail:forgotPassword)
     userFindById(userid:string)
-    ResendOtp(email:string)
+    ResendOtp(email:string);
+    AllUserDetails(userid:string);
+    userSearch(search:string);
 }

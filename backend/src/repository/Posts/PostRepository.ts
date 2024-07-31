@@ -108,11 +108,11 @@ export class PostRepository implements PostRepositoryInterface {
 
     async savePosts(postData: any) {
         try {
-            const { postDetails, userData } = postData
+            const { postDetails, User } = postData
+            console.log(postDetails,User,'ooooooooooo0ooo0o')
             const Saveposts = await SavePost.create({
                 postId: postDetails._id,
-                savedBy: userData,
-                postData: [postDetails]
+                savedBy: User,
             })
             if (Saveposts) {
                 return Saveposts
@@ -127,7 +127,6 @@ export class PostRepository implements PostRepositoryInterface {
         try {
             console.log(userid)
             const userAllPost = await Posts.find({ userId: userid, visibile: false })
-            console.log(userAllPost)
             if (userAllPost) {
                 return userAllPost
             }
@@ -153,27 +152,51 @@ export class PostRepository implements PostRepositoryInterface {
                 } else {
                     post.likes.push(userId)
                 }
-
                 await post.save();
                 return post;
             }
 
-            // console.log(post.likes, userId, "this is rhe calling")
-            // post.likes = post.likes.map(i => i + "")
-            // const isLiked = post.likes.includes(userId);
-            // if (isLiked) {
-            //     // User has already liked the post, so remove the like
-            //     // post.likes = post.likes.filter(id => id.toString() !== userId);
-            // } else {
-            //     // User has not liked the post, so add the like
-            //     post.likes.push(userId.toString());
-            // }
 
         } catch (error) {
             console.log(error)
         }
     }
 
+    async CommentLike(comment:any,userId:string){
+        try {
+            // console.log(comment,userId)
+            const LikedComment = await Comment.findById(comment._id)
+            if(!LikedComment){
+                console.log('No Comment In this ID');
+                return
+            }
+            const isLiked = LikedComment.likes.includes(userId);
+            if(isLiked){
+                LikedComment.likes = LikedComment.likes.filter(id => id.toString()!== userId);
+            }else{
+                LikedComment.likes.push(userId.toString());
+            }
+            await LikedComment.save();
+            return LikedComment
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async CommentReplies(data:any,userId:string,reply:string){
+        try {
+            console.log(data,userId,reply)
+            const commentRes = await Comment.findById(data);
+            console.log(commentRes)
+            if(commentRes){
+                commentRes.replies.push({ userId, reply })
+                await commentRes.save();
+                return commentRes
+            } 
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     async getUser(userEmail: string) {
         try {

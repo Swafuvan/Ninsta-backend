@@ -10,4 +10,6 @@ export interface PostUsecasesInterface{
     allComments(postId:string);
     allPostReports()
     savePosts(postData:any);
+    CommentLike(comment:any,userId:string);
+    CommentReplies(data:any,userId:string,reply:string);
 }

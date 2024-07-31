@@ -22,6 +22,10 @@ const SavePostsSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    Show:{
+        type:Boolean,
+        default: true
     }
 }, {
     timestamps: true

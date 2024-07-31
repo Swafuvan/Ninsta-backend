@@ -28,6 +28,26 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
+    async AllUserDetails(userId:string){
+        try {
+            const AllUserData = await this.userRepository.AllUserDetails(userId)
+            return AllUserData
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async userSearch(search:string){
+        try {
+            const SearchData = await this.userRepository.userSearch(search);
+            if(SearchData){
+                return SearchData
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async OTPAddDatabase(email:string,OTP:string){
         const DataAdd = await this.userRepository.OTPAddDatabase(email,OTP)
         return DataAdd

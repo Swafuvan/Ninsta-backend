@@ -46,7 +46,7 @@ const CommentSchema = new mongoose.Schema({
         default: []
     },
     likes: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [String],
         default: []
     }
 }, {
