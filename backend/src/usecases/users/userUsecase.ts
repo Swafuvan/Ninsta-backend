@@ -37,6 +37,47 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
+    async UserMessages(userid:string,senderId:string){
+        try {
+            const MessageData = await this.userRepository.UserMessages(userid,senderId)
+            return MessageData
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async FollowUser(userId:string, friendId:any){
+        try {
+            const followedUser = await this.userRepository.FollowUser(userId,friendId);
+            if(followedUser){
+                return followedUser
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    async friendSuggession(userId:string){
+        try {
+            const userSugg = await this.userRepository.friendSuggession(userId);
+            if(userSugg){
+                return userSugg
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async SavedPosts(userId:string){
+        try {
+            const SavedData = await this.userRepository.SavedPosts(userId)
+            return SavedData
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async userSearch(search:string){
         try {
             const SearchData = await this.userRepository.userSearch(search);

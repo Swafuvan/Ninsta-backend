@@ -95,7 +95,7 @@ export class PostController {
             if (allPost) {
                 return res.status(200).json({ allPost: allPost })
             }
-            res.status(205).json({ message: 'Failed to fetch Post' })
+            res.status(203).json({ message: 'Failed to fetch Post' })
         } catch (error) {
             console.log(error)
         }

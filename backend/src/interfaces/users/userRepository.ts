@@ -1,4 +1,4 @@
-import { Loginuser, userObj,OTPData, googleUser, forgotPassword} from "../Users"
+import { Loginuser, userObj,OTPData, googleUser, forgotPassword ,userMessage} from "../Users"
 
 // this interface for userRepository
 export interface userRepositoryInterface{
@@ -12,4 +12,9 @@ export interface userRepositoryInterface{
     userFindById(userid:string)
     AllUserDetails(userid:string);
     userSearch(search:string);
+    UserChats(message:userMessage);
+    UserMessages(userid:string,senderId:string);
+    SavedPosts(userId:string);
+    friendSuggession(userId:string);
+    FollowUser(userId:string, friendId:any);
 }

@@ -24,14 +24,16 @@ const messageSchema = new Schema({
   seen: {
     type: Boolean,
     default: false,
-    required:true
+    required: true
   },
   File: {
-    fileType:{type:String,
-        default:''
+    fileType: {
+      type: String,
+      default: '',
     },
-    link:{type:String,
-        default:''
+    link: {
+      type: String,
+      default: ''
     }
   },
 

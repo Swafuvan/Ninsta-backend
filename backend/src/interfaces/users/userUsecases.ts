@@ -12,4 +12,8 @@ export interface userUsecaseInterface{
     ResendOtp(email:string);
     AllUserDetails(userid:string);
     userSearch(search:string);
+    UserMessages(userid:string,senderId:string);
+    SavedPosts(userId:string);
+    friendSuggession(userId:string);
+    FollowUser(userId:string, friendId:any);
 }

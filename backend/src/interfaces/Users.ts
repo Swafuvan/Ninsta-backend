@@ -12,6 +12,20 @@ export interface userObj{
     isBlocked:boolean,
 }
 
+export interface userMessage{
+    _id?:string;
+    from: string;
+    to: string;
+    message: string;
+    time:Date;
+    seen:boolean;
+    file:{
+        filetype:String;
+        Link?:string
+    }
+
+}
+
 export interface userDetail extends userObj{
     _id:string;
 }

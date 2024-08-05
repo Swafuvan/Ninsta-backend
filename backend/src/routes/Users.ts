@@ -19,11 +19,21 @@ userRouter.post('/login', userController.loginUser.bind(userController));
 
 userRouter.post('/verifyOtp',userController.UserSignupOTP.bind(userController));
 
+userRouter.get('/chat',verifyToken,userController.UserChats.bind(userController));
+
 userRouter.get('/resendOtp',userController.ResendOtp.bind(userController));
+
+userRouter.post('/follow',verifyToken,userController.FollowUsers.bind(userController));
+
+userRouter.get('/savedPosts',verifyToken,userController.SavedUserPosts.bind(userController));
+
+userRouter.get('/suggession',verifyToken,userController.UserFriendSuggession.bind(userController));
 
 userRouter.get('/user',verifyToken,userController.UserfindById.bind(userController));
 
 userRouter.get('/AllUsers',verifyToken,userController.AllUserDetails.bind(userController));
+
+userRouter.get('/stories',verifyToken)
 
 userRouter.get('/userSearch',verifyToken,userController.userSearchDetails.bind(userController));
 

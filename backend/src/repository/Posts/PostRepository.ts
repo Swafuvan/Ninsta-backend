@@ -13,7 +13,6 @@ export class PostRepository implements PostRepositoryInterface {
         try {
             const commentDetail = await Comment.find({ postId: postId + '' }).populate('postId').populate('userId')
             if (commentDetail) {
-                console.log(commentDetail)
                 return commentDetail
             }
             return null
@@ -54,7 +53,6 @@ export class PostRepository implements PostRepositoryInterface {
     async AllPostDetails() {
         try {
             const allPostDetails = await Posts.find({ visibile: false }).sort({ createdAt: -1 })
-            console.log(allPostDetails);
             if (allPostDetails) {
                 return allPostDetails
             }
@@ -68,16 +66,14 @@ export class PostRepository implements PostRepositoryInterface {
     async Comments(commentData: any) {
         try {
             const { userId, comment, PostDetails } = commentData
-            console.log(userId, comment, PostDetails)
-            console.log(PostDetails._id, '-----------------------')
+            
             const Comments = await Comment.create({
                 userId: userId,
                 postId: PostDetails._id,
                 comment: comment,
 
             })
-            console.log(Comments)
-            console.log('vannutta')
+            
             if (Comment) {
                 return Comments
             }
@@ -90,7 +86,6 @@ export class PostRepository implements PostRepositoryInterface {
     async ReportedPosts(reason: string, postdata: any) {
         try {
             const { postId, userId } = postdata
-            console.log(postId, userId, 'last ethi')
             const reportedPosts = await PostReports.create({
                 postId: postId,
                 reason: reason,
@@ -109,7 +104,6 @@ export class PostRepository implements PostRepositoryInterface {
     async savePosts(postData: any) {
         try {
             const { postDetails, User } = postData
-            console.log(postDetails,User,'ooooooooooo0ooo0o')
             const Saveposts = await SavePost.create({
                 postId: postDetails._id,
                 savedBy: User,
@@ -126,7 +120,7 @@ export class PostRepository implements PostRepositoryInterface {
     async AllUserPost(userid: string) {
         try {
             console.log(userid)
-            const userAllPost = await Posts.find({ userId: userid, visibile: false })
+            const userAllPost = await Posts.find({ userId: userid, visibile: false }).populate('userId')
             if (userAllPost) {
                 return userAllPost
             }
@@ -187,7 +181,6 @@ export class PostRepository implements PostRepositoryInterface {
         try {
             console.log(data,userId,reply)
             const commentRes = await Comment.findById(data);
-            console.log(commentRes)
             if(commentRes){
                 commentRes.replies.push({ userId, reply })
                 await commentRes.save();
