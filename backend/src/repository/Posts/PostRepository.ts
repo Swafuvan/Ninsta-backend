@@ -2,6 +2,7 @@ import { getPayload } from "../../helper/JWT";
 import { PostRepositoryInterface } from "../../interfaces/Posts/postRepository";
 import { userObj } from "../../interfaces/Users";
 import { Comment } from "../../model/commentModel";
+import { Notification } from "../../model/notificationModel";
 import { Posts } from "../../model/postModel";
 import { PostReports } from "../../model/postReport";
 import { SavePost } from "../../model/savePostModel";
@@ -21,6 +22,18 @@ export class PostRepository implements PostRepositoryInterface {
         }
     }
 
+    async ExplorePage(){
+        try {
+            const AllPostDetails = await Posts.find();
+            if (AllPostDetails) {
+                return AllPostDetails
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async UploadPostDetails(posts: any, postContent: any, user: any) {
         console.log(posts)
         const UploadedDetails = await Posts.insertMany([{
@@ -28,9 +41,8 @@ export class PostRepository implements PostRepositoryInterface {
             content: postContent,
             createdAt: new Date(),
             likes: [],
-            comments: [],
             visibile: false,
-            Url: posts
+            Url:posts
         }])
         if (UploadedDetails) {
             return UploadedDetails
@@ -63,6 +75,26 @@ export class PostRepository implements PostRepositoryInterface {
         }
     }
 
+    async commentNotification(userId:any,PostDetails:any,comment:any){
+        try {
+            const commentData = await Notification.findOne({userId:PostDetails.userId+'',postId:PostDetails._id+'',senderId:userId+'',type:'comment'});
+            if(commentData){
+                console.log('already there')
+            }else{
+                const commentNotify = Notification.create({
+                    userId:PostDetails.userId,
+                    postId: PostDetails._id,
+                    type: 'comment',
+                    content: 'Commented on this Post',
+                    senderId: userId,
+                }) 
+                return commentNotify
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async Comments(commentData: any) {
         try {
             const { userId, comment, PostDetails } = commentData
@@ -71,10 +103,9 @@ export class PostRepository implements PostRepositoryInterface {
                 userId: userId,
                 postId: PostDetails._id,
                 comment: comment,
-
             })
-            
-            if (Comment) {
+            if (Comments) {
+                const commentNotity = await this.commentNotification(userId,PostDetails,comment);
                 return Comments
             }
             return null;
@@ -130,11 +161,32 @@ export class PostRepository implements PostRepositoryInterface {
         }
     }
 
+    async UsersLikePosts(userId:string,postId:string,post:any){
+        try {
+            console.log(userId,postId,post);
+            const likeNotifi = await Notification.findOne({userId:post.userId,postId:postId,senderId:userId,type:'like'});
+            if(likeNotifi){
+                console.log('already there')
+            }else{
+                const LikedNotification = await Notification.create({
+                    type: 'like',
+                    userId: post.userId, // who will get the notification
+                    postId: postId,
+                    content:'Liked Your Post',
+                    senderId:userId, // who is like the Post
+                })
+                if (LikedNotification) {
+                    return LikedNotification 
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async PostLikes(userId: any, _id: any) {
         try {
-            // const PostDatails = await Posts.findByIdAndUpdate(_id,{
-            //     $push: { likes: userId }
-            // })
+            
             const post = await Posts.findById(_id);
             if (!post) {
                 console.log("Post not found");
@@ -147,6 +199,8 @@ export class PostRepository implements PostRepositoryInterface {
                     post.likes.push(userId)
                 }
                 await post.save();
+                const userLikesNotify = await this.UsersLikePosts(userId,_id,post);
+                console.log(userLikesNotify);
                 return post;
             }
 

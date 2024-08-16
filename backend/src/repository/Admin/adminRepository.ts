@@ -3,6 +3,7 @@ import { Loginuser, userObj } from "../../interfaces/Users";
 import { Posts } from "../../model/postModel";
 import { PostReports } from "../../model/postReport";
 import { Users } from "../../model/userModel";
+import { UserReports } from "../../model/userReportModel";
 
 export class adminRepository implements adminRepositoryInterface {
     async postReportAction(postData: any) {
@@ -21,6 +22,41 @@ export class adminRepository implements adminRepositoryInterface {
             console.log(error);
         }
     }
+
+    async userReportAction(data:any){
+        try {
+            console.log(data._id)
+            const userDetails = await UserReports.findById(data._id);
+            console.log(userDetails,'-------------------------------');
+            if (userDetails) {
+                const userBlocking = await Users.findById(data.userId);
+                if (userBlocking) {
+                    userBlocking.isBlocked =!userBlocking.isBlocked
+                    await userBlocking.save();
+                }
+                if(userDetails){
+                    userDetails.solve =!userDetails.solve
+                    await userDetails.save();
+                }
+                return userDetails
+            }
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userReports(){
+        try {
+            const userReport = await UserReports.find().populate('userId').populate('reportedBy');
+            if(userReport){
+                return userReport
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async userFindById(userId: string) {
         const userDetails = await Users.findById(userId)
         if (userDetails) {
@@ -55,9 +91,11 @@ export class adminRepository implements adminRepositoryInterface {
 
     async Usermanagement() {
         try {
-            const response = await Users.find({ isAdmin: false })
+            const response = await Users.find({ isAdmin: false }).exec()
             if (response) {
-                return response
+                 const totalUsers = await Users.countDocuments({isAdmin:false});
+                const userDetail = {totalUsers,response}
+                return userDetail
             }
             return null
         } catch (error) {
@@ -67,6 +105,7 @@ export class adminRepository implements adminRepositoryInterface {
 
     async UserBlocked(userEmail: any, isBlock: any) {
         try {
+            console.log(userEmail,isBlock);
             const UserDetais = await Users.findOneAndUpdate({ email: userEmail }, {
                 $set: {
                     isBlocked: isBlock

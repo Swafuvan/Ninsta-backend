@@ -9,8 +9,6 @@ const adminController = new AdminControllers(Adminusecase)
 const adminrouter = express.Router();
 
 
-adminrouter.get('/',adminVerfication, adminController.AdminHome.bind(adminController));
-
 adminrouter.get('/userManagement',adminVerfication, adminController.getUser.bind(adminController));
 
 adminrouter.post('/login',adminController.AdminLogin.bind(adminController));
@@ -23,8 +21,12 @@ adminrouter.get('/adminData',adminVerfication,adminController.adminDetails.bind(
 
 adminrouter.get('/userfindById',adminVerfication,adminController.UserFindById.bind(adminController));
 
+adminrouter.put('/userReportAction',adminVerfication,adminController.UserReportAction.bind(adminController));
+
+adminrouter.get('/userReports',adminVerfication,adminController.UserReportDetails.bind(adminController));
+
 adminrouter.post('/postReport',adminVerfication,adminController.PostReportAction.bind(adminController));
 
-adminrouter.get('/userReports',adminVerfication,adminController.userPostReport.bind(adminController));
+adminrouter.get('/userPostReports',adminVerfication,adminController.userPostReport.bind(adminController));
 
 export default adminrouter

@@ -10,13 +10,15 @@ export class UserController {
     async loginUser(req: Request, res: Response, next: NextFunction) {
         try {
             let datas = req.body
-            console.log(datas);
             const userDetails = await this.userUsecase.loginUser(datas)
             if (userDetails) {
                 const token = generateToken(userDetails.email, userDetails.isAdmin)
                 return res.status(200).json({ userDetails: userDetails, JWTtoken: token })
             }
-            res.status(400).json({ message: "User Not Found" })
+            if (userDetails === null) {
+                return res.status(206).json({ message: "Your account is blocked" });
+            }
+            res.status(203).json({ message: "User Not Found", });
         } catch (error) {
             console.log(error);
             next(error)
@@ -36,11 +38,23 @@ export class UserController {
         }
     }
 
-    async UserFriendSuggession(req:Request,res:Response){
+    async UserReporting(req: Request, res: Response) {
+        try {
+            const { reason, userId, reportedId } = req.body;
+            const reportResponse = await this.userUsecase.userReporting(reason, userId, reportedId);
+            if (reportResponse) {
+                return res.status(200).json({ reportResponse: reportResponse })
+            }
+            res.status(205).json({ message: 'Failed to report user' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserFriendSuggession(req: Request, res: Response) {
         try {
             const userId = req.query.userId
-            console.log(userId);
-            const suggessions = await this.userUsecase.friendSuggession(userId+'');
+            const suggessions = await this.userUsecase.friendSuggession(userId + '');
             if (suggessions) {
                 return res.status(200).json({ suggessions: suggessions })
             }
@@ -53,7 +67,6 @@ export class UserController {
     async signupUser(req: Request, res: Response, next: NextFunction) {
         try {
             const details = req.body
-            console.log(req.body)
             const userDetails = await this.userUsecase.signupUser(details);
             if (userDetails) {
                 return res.status(200).json({ userDetails: userDetails })
@@ -69,7 +82,6 @@ export class UserController {
         try {
             const userDetails = req.body
             const UserResponse = await this.userUsecase.GoogleSignup(userDetails)
-            console.log(UserResponse);
             if (UserResponse) {
                 const token = generateToken(UserResponse.email, UserResponse.isAdmin)
                 return res.status(200).json({ userData: UserResponse, JWTtoken: token })
@@ -80,11 +92,51 @@ export class UserController {
         }
     }
 
-    async FollowUsers(req:Request,res:Response){
+    async AllUserMessages(req:Request,res:Response){
         try {
-            const {follower,user} = req.body
-            console.log(follower,user);
-            const FollowData = this.userUsecase.FollowUser(user,follower);
+            const userId = req.query.userId;
+            const userMessages = await this.userUsecase.allUserMessages(userId+'');
+            if (userMessages) {
+                return res.status(200).json({ userMessages: userMessages })
+            }
+            res.status(205).json({ message: 'Failed to fetch user messages' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserFriendsStories(req: Request, res: Response) {
+        try {
+            const userId = req.query.userId;
+            console.log(userId);
+            const userDetail = await this.userUsecase.userStories(userId + '');
+            if (userDetail) {
+                return res.status(200).json({ userDetail: userDetail })
+            }
+            res.status(205).json({ message: 'Failed to fetch user stories' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserStoryAdding(req: Request, res: Response) {
+        try {
+            const userId = req.body;
+            const userStory = await this.userUsecase.StoryAdding(userId);
+            if (userStory) {
+                return res.status(200).json({ userStory:userStory })
+            }
+            return res.status(205).json({ message: 'Failed to add story' });
+
+        } catch (error) {
+
+        }
+    }
+
+    async FollowUsers(req: Request, res: Response) {
+        try {
+            const { follower, user } = req.body
+            const FollowData = this.userUsecase.FollowUser(user, follower);
             if (FollowData) {
                 return res.status(200).json({ message: 'Followed' })
             }
@@ -110,12 +162,23 @@ export class UserController {
         }
     }
 
+    async userNotification(req:Request,res:Response){
+        try {
+            const userId = req.query.userId;
+            const userResult = await this.userUsecase.userNotifications(userId+'');
+            if (userResult) {
+                return res.status(200).json({ userResult: userResult })
+            }
+            return res.status(205).json({ message: 'Failed to fetch user notifications' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async getUser(req: Request, res: Response) {
         try {
             const user = getPayload(req)
-            console.log(user);
             let users = await this.userUsecase.getUser(user?.email + '');
-            console.log(users);
             if (users) {
                 return res.status(200).json({ users: users })
             }
@@ -127,7 +190,6 @@ export class UserController {
 
     async ForgotPassword(req: Request, res: Response) {
         try {
-            console.log(req.body)
             const ChangedPassword = await this.userUsecase.forgotPassword(req.body)
             if (ChangedPassword) {
                 return res.status(200).json({ ChangedPassword: ChangedPassword })
@@ -141,11 +203,9 @@ export class UserController {
     async AllUserDetails(req: Request, res: Response) {
         try {
             const { userId } = req.query
-            console.log(userId)
-            console.log(typeof userId)
             const UserDetails = await this.userUsecase.AllUserDetails(userId + '');
             if (UserDetails) {
-                return res.status(200).json({ UserDetails: UserDetails  })
+                return res.status(200).json({ UserDetails: UserDetails })
             }
             return res.status(205).json({ message: 'No User Found' });
         } catch (error) {
@@ -160,7 +220,7 @@ export class UserController {
             const userData = await this.userUsecase.OtpVerification(req.body)
             if (userData) {
                 const token = generateToken(userData.email, userData.isAdmin)
-                return res.status(200).json({ userData: userData , JWTtoken:token });
+                return res.status(200).json({ userData: userData, JWTtoken: token });
             }
             return res.status(203).json({ message: "Enter the correct OTP", userData: userData })
         } catch (error) {
@@ -172,7 +232,7 @@ export class UserController {
         try {
             const { userIdTo, userIdFrom } = req.query
             console.log(userIdFrom, userIdTo);
-            const UserChatRes = await this.userUsecase.UserMessages(userIdFrom+'',userIdTo+'');
+            const UserChatRes = await this.userUsecase.UserMessages(userIdFrom + '', userIdTo + '');
             if (UserChatRes) {
                 return res.status(200).json({ UserChatRes: UserChatRes });
             }
@@ -182,33 +242,44 @@ export class UserController {
         }
     }
 
-    async SavedUserPosts(req:Request,res:Response){
+    async SavedUserPosts(req: Request, res: Response) {
         try {
             const userId = req.query.userId
-            const savedData = await this.userUsecase.SavedPosts(userId+'');
+            const savedData = await this.userUsecase.SavedPosts(userId + '');
             if (savedData) {
-                console.log(savedData);
                 return res.status(200).json({ savedData: savedData });
             }
             return res.status(205).json({ message: 'No Saved Posts Found' });
         } catch (error) {
-            console.log(error); 
+            console.log(error);
         }
-    } 
+    }
 
     async userSearchDetails(req: Request, res: Response) {
         try {
-            const { search } = req.query
-            console.log(search)
-            const searchResult = await this.userUsecase.userSearch(search + '');
+            const { search, userId } = req.query
+            const searchResult = await this.userUsecase.userSearch(search + '', userId + '');
             if (searchResult) {
                 return res.status(200).json({ searchResult: searchResult });
-            }else if(searchResult === null){
+            } else if (searchResult === null) {
                 return res.status(205).json({ message: 'No User Found' });
-            } 
+            }
             res.status(205).json({ message: 'No User Found' });
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async BlockUsers(req: Request, res: Response) {
+        try {
+            const { userId, BlockUserId } = req.body;
+            const blockStatus = await this.userUsecase.userBlocking(userId, BlockUserId);
+            if (blockStatus) {
+                return res.status(200).json({ message: 'User Blocked' })
+            }
+            return res.status(205).json({ message: 'Failed to Block User' })
+        } catch (error) {
+            console.log(error)
         }
     }
 

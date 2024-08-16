@@ -20,6 +20,7 @@ export class userUsecase implements userUsecaseInterface {
                     console.log('password match');
                     return result
                 }
+                
             }
             return null
         } catch (error) {
@@ -57,6 +58,49 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
+    async userStories(userId: string) {
+        try {
+            const usersStoryData = await this.userRepository.userStories(userId);
+            if(usersStoryData){
+                return usersStoryData
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userNotifications(userId: string) {
+        try {
+            const userresponse = await this.userRepository.userNotifications(userId);
+            if(userresponse){
+                return userresponse
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async allUserMessages(userId: string) {
+        try {
+            const userMessages = await this.userRepository.allUserMessages(userId);
+            if(userMessages){
+                return userMessages
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async StoryAdding(userId:string){
+        try {
+            const storyData = await this.userRepository.StoryAdding(userId);
+            if(storyData){
+                return storyData
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async friendSuggession(userId:string){
         try {
@@ -78,9 +122,32 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
-    async userSearch(search:string){
+    async userBlocking(userId:string,blockerId:string){
         try {
-            const SearchData = await this.userRepository.userSearch(search);
+            const blockResponse = await this.userRepository.userBlocking(userId,blockerId);
+            if(blockResponse){
+                return blockResponse
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userReporting(reason:string,userId:string,reportedId:string){
+        try {
+            const ReportedData = await this.userRepository.userReporting(reason,userId,reportedId);
+            if(ReportedData){
+                return ReportedData
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async userSearch(search:string,userId:string){
+        try {
+            const SearchData = await this.userRepository.userSearch(search,userId);
             if(SearchData){
                 return SearchData
             }

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
 import { userObj } from '../../interfaces/Users';
 import { AdminUsecasesInterface } from '../../interfaces/admin/adminUseCases';
 import { adminVerfication, generateToken, getPayload } from '../../helper/JWT';
@@ -8,13 +8,41 @@ export class AdminControllers {
     constructor(private adminUseCases: AdminUsecasesInterface) { }
     async getUser(req: Request, res: Response) {
         try {
+            const {currentPage,userCount} = req.query
+            
             const userDetails = await this.adminUseCases.UserManagement()
             if (userDetails) {
-                return res.status(200).json({ userData: userDetails })
+                return res.status(200).json({ userData: userDetails.response,totalUsers:userDetails.totalUsers })
             }
             res.status(400).json({ message: "NO User Details" })
         } catch (error) {
 
+        }
+    }
+
+    async UserReportAction(req:Request,res:Response){
+        try {
+            const data = req.body;
+            console.log(data,'12121212121212121212')
+            const userReport = await this.adminUseCases.userReportAction(data);
+            if (userReport) {
+                return res.status(200).json({ userReport: userReport })
+            }
+            res.status(205).json({ message: 'Failed to report user' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserReportDetails(req:Request,res:Response){
+        try {
+            const userReports = await this.adminUseCases.userReports();
+            if (userReports) {
+                return res.status(200).json({ userReports: userReports })
+            }
+            res.status(205).json({ message: "No User Reports" })
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -40,16 +68,6 @@ export class AdminControllers {
             res.status(205).json({ message: 'Failed to report post' })
         } catch (error) {
             console.log(error)
-        }
-    }
-
-
-
-    AdminHome(req: Request, res: Response) {
-        try {
-            res.send('this is admin Home');
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -83,7 +101,6 @@ export class AdminControllers {
     async UserDetails(req: Request, res: Response) {
         try {
             const user = req.body
-            console.log(user);
             const userDetails = await this.adminUseCases.UserDetails(user)
             if (userDetails) {
                 return res.status(200).json({ userDetails: userDetails })
@@ -97,9 +114,7 @@ export class AdminControllers {
     async adminDetails(req: Request, res: Response) {
         try {
             const admin = getPayload(req)
-            console.log(admin);
             const adminData = await this.adminUseCases.adminDetails(admin?.email)
-            console.log(adminData)
             if (adminData) {
                 return res.status(200).json({ adminData: adminData })
             }
@@ -111,10 +126,9 @@ export class AdminControllers {
 
     async UserBlocking(req: Request, res: Response) {
         try {
-            console.log(req.query);
-            const { email, isBlock } = req.query
-            console.log(email, isBlock)
-            const UserBlocked = await this.adminUseCases.UserBlocked(email + "", isBlock + "")
+            const { User, isBlock } = req.query
+            console.log(User, isBlock);
+            const UserBlocked = await this.adminUseCases.UserBlocked(User + "", isBlock + "")
             if (UserBlocked) {
                 return res.status(200).json({ message: "User Blocked", UserBlocked: UserBlocked })
             }
@@ -123,8 +137,6 @@ export class AdminControllers {
             console.log(error);
         }
     }
-
-
 
 }
 

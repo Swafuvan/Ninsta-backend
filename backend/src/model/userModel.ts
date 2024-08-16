@@ -37,6 +37,11 @@ const userScheme = new mongoose.Schema({
     followers:{
         type:[String],
         default:[]
+    },
+    blockedUsers: {
+        type: [String],
+        ref: 'User',
+        default: []
     }
 },{
     timestamps: true

@@ -17,6 +17,30 @@ export class adminUseCases implements AdminUsecasesInterface {
             console.log(error)
         }
     }
+
+async userReportAction(data:any){
+        try {
+            const responseData = await this.adminRepository.userReportAction(data)
+            if(responseData){
+                return responseData
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async userReports(){
+        try {
+            const userDetails = await this.adminRepository.userReports();
+            if(userDetails){
+                return userDetails
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async userFindById(userId: string) {
         try {
             const userDetails = await this.adminRepository.userFindById(userId)
@@ -93,9 +117,10 @@ export class adminUseCases implements AdminUsecasesInterface {
 
     async UserBlocked(userEmail: any,isBlocked:string) {
         try {
-            const Blocked = isBlocked === "false" ? true : false;
+            
             console.log(userEmail, isBlocked, '111111111111111111111111111')
-            const UserBlocked = await this.adminRepository.UserBlocked(userEmail,Blocked)
+            
+            const UserBlocked = await this.adminRepository.UserBlocked(userEmail,isBlocked)
             if (UserBlocked) {
                 return UserBlocked
             }

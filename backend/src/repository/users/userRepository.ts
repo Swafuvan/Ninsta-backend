@@ -5,6 +5,9 @@ import { userRepositoryInterface } from "../../interfaces/users/userRepository";
 import { Users } from "../../model/userModel";
 import { Message } from '../../model/messageModel';
 import { SavePost } from '../../model/savePostModel';
+import { UserReports } from '../../model/userReportModel';
+import { Story } from '../../model/storyModel';
+import { Notification } from '../../model/notificationModel';
 
 export class userRepository implements userRepositoryInterface {
     async userFindById(userid: string) {
@@ -19,23 +22,123 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
+    async userBlocking(userId: string, blockerId: string) {
+        try {
+            const BlockingResponse = await Users.findById(blockerId);
+            if (BlockingResponse) {
+                const Blocked = BlockingResponse.blockedUsers.includes(userId)
+                if (Blocked) {
+                    BlockingResponse.blockedUsers = BlockingResponse.blockedUsers.filter(val => val !== userId);
+                } else {
+                    BlockingResponse.blockedUsers.push(userId);
+                }
+                await BlockingResponse.save();
+                return BlockingResponse
+
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userNotifications(userId: string) {
+        try {
+            const userNotific = await Notification.find({ userId: userId }).populate('userId')
+            .populate('senderId').populate('postId')
+            .sort({ createdAt: -1 }).limit(6);
+            if (userNotific) {
+                console.log(userNotific);
+                return userNotific
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userNotification(userId: string, friendId: any) {
+        try {
+            console.log(userId, friendId)
+            const userFollow = await Notification.findOne({userId:friendId._id,senderId:userId,type:'follow'})
+            if(userFollow){
+                console.log('already user follow')
+            }else{
+                const NotificationData = await Notification.create({
+                    userId: friendId._id+'',
+                    senderId: userId+'',
+                    content: 'Followed You',
+                    type: 'follow',
+                })
+                return NotificationData
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userReporting(reason: string, userId: string, reportedId: string) {
+        try {
+            console.log(reason, userId + 'user', reportedId + "reporter");
+            const userReport = await UserReports.create({
+                userId: reportedId, // report person
+                reportedBy: userId, // reported person
+                reason: reason,
+            })
+            if (userReport) {
+                return userReport
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     async loginUser(datas: Loginuser): Promise<userObj | null> {
         try {
             console.log(datas.email, datas.password);
 
-            const userDetails = await Users.findOne({ email: datas.email })
-            return userDetails as userObj;
+            const userDetails = await Users.findOne({ email: datas.email, isBlocked: false });
+            if (userDetails) {
+                return userDetails as userObj
+            }
+            return null;
         } catch (error) {
             console.log(error);
             return null
         }
     }
 
-    async userSearch(search: string) {
+    async userStories(userId: string) {
+        try {
+            const userDetails = await Story.find({ _id: { $ne: userId } });
+            if (userDetails) {
+                return userDetails
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async StoryAdding(userId: string) {
+        try {
+            const addedStory = await Story.create({
+                user: userId,
+                imageUrl: '',
+                caption: '',
+
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userSearch(search: string, userId: string) {
         try {
             const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-            const searchResult = await Users.find({isAdmin:{$ne:true},
+            const searchResult = await Users.find({
+                _id: { $ne: userId },
+                isAdmin: false,
                 username: { $regex: escapedSearch, $options: 'i' }
             });
             if (searchResult) {
@@ -47,29 +150,31 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
-    async FollowUser(userId:string, friendId:any){
+    async FollowUser(userId: string, friendId: any) {
         try {
             const followerData = await Users.findById(userId);
             const followingData = await Users.findById(friendId._id);
-            if(followerData){
+            if (followerData) {
                 const friend = followerData.following.includes(friendId?._id);
-                if(friend){
+                if (friend) {
                     followerData.following = followerData.following.filter(val => val !== friendId._id);
-                }else{
+                } else {
                     followerData.following.push(friendId._id);
                 }
                 await followerData.save();
-                if(followingData){
+                if (followingData) {
                     const friend = followingData.followers.includes(userId);
-                    if(friend){
+                    if (friend) {
                         followingData.followers = followingData.followers.filter(val => val !== userId);
-                    }else{
+                    } else {
                         followingData.followers.push(userId);
                     }
                     await followingData.save();
-                    
+                    const notificationAdd = await this.userNotification(userId, friendId);
+                    console.log(notificationAdd);
                 }
-                return {followerData,followingData}
+
+                return { followerData, followingData }
             }
         } catch (error) {
             console.log(error);
@@ -93,6 +198,21 @@ export class userRepository implements userRepositoryInterface {
             if (userChat) {
                 return userChat
             }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async messageSeen(message: any) {
+        try {
+            const userRes = await Message.find({
+                from: message.to, to: message.from, seen: false
+            })
+            await userRes?.forEach(async (val) => {
+                val.seen = true;
+                await val.save()
+            })
+            return userRes.map((usr) => usr._id)
         } catch (error) {
             console.log(error);
         }
@@ -200,11 +320,10 @@ export class userRepository implements userRepositoryInterface {
         return false
     }
 
-    async friendSuggession(userId:string){
+    async friendSuggession(userId: string) {
         try {
-            const userSuggession = await Users.find({_id:{$ne:userId},isBlocked:false,isAdmin:false}).sort({_id:-1})
-            console.log(userSuggession);
-            if(userSuggession){
+            const userSuggession = await Users.find({ _id: { $ne: userId }, isBlocked: false, isAdmin: false }).sort({ _id: -1 })
+            if (userSuggession) {
                 return userSuggession
             }
             return null
@@ -222,7 +341,6 @@ export class userRepository implements userRepositoryInterface {
                     { from: senderId, to: userid }
                 ]
             }).sort({ time: 1 });
-            console.log(ChatDetails)
             if (ChatDetails) {
                 return ChatDetails
             }
@@ -232,11 +350,30 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
+    async allUserMessages(userId: string) {
+        try {
+            console.log(userId)
+            const userMessages = await Message.find({
+                $or: [
+                    { to: userId },
+                    { from: userId }
+                ]
+            }).populate('to').populate('from').sort({ time: -1 });
+            if (userMessages) {
+
+                console.log(userMessages)
+                return userMessages
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async SavedPosts(userId: string) {
         try {
             const SavedPost = await SavePost.find({ savedBy: userId }).populate('postId');
             if (SavedPost) {
-                console.log(SavedPost)
                 return SavedPost
             }
         } catch (error) {
@@ -260,5 +397,4 @@ export class userRepository implements userRepositoryInterface {
             throw error
         }
     }
-
 }

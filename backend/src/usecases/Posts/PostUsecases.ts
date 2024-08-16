@@ -3,12 +3,12 @@ import { PostRepositoryInterface } from "../../interfaces/Posts/postRepository";
 import { PostUsecasesInterface } from "../../interfaces/Posts/PostUsecases";
 import { userObj } from "../../interfaces/Users";
 
-export class PostUsecases implements PostUsecasesInterface{
+export class PostUsecases implements PostUsecasesInterface {
     constructor(private postRepository: PostRepositoryInterface) { }
-    async allComments(postId:string) {
+    async allComments(postId: string) {
         try {
             const CommentData = await this.postRepository.allComments(postId)
-            if(CommentData){
+            if (CommentData) {
                 return CommentData
             }
         } catch (error) {
@@ -16,10 +16,10 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async allPostReports(){
+    async allPostReports() {
         try {
             const reportData = await this.postRepository.allPostReports()
-            if(reportData){
+            if (reportData) {
                 return reportData
             }
         } catch (error) {
@@ -27,20 +27,57 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async UploadPostDetails(posts:any,user:any){
-        
-        const data = posts
-        const userData =await this.getUser(user)
-        console.log(userData?._id)
-        const results = await uploadImages(data.files['image[]'],'posts');
-        const value = data.fields.text[0]
-        return await this.postRepository.UploadPostDetails(results,value,userData._id);
+    async ExplorePage() {
+        try {
+            const ExploreData = await this.postRepository.ExplorePage();
+            return ExploreData
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    async savePosts(postData:any){
+    async UploadPostDetails(posts: any, user: any) {
+
+        const data = posts
+        const userData = await this.getUser(user);
+        const results: { url: string; fileType: string }[] = [];
+        console.log(posts.files, posts.fields, '00000000000000000000000')
+        for (const key in posts.fields) {
+            if (key !== 'text') {
+                if (posts.fields[key][0] === "image") {
+                    console.log(posts.fields[key][0])
+                    const imageData = {
+                        files: posts.files['PostFiles[0][file]'],
+                        fileType: posts.fields[key][0],
+                    }
+                    const imageResults = await uploadImages(imageData.files, 'posts');
+                    const data = imageResults.map(item => { return { url: item, fileType: "image" } })
+                    console.log(imageResults, data, 'o0o0o0o0o0o0oo00')
+                    results.push(...data);
+
+                } else {
+                    const videoData = {
+                        files: posts.files['PostFiles[0][file]'],
+                        fileType: posts.fields[key][0],
+                    }
+                    const videoResults = await uploadImages(videoData.files, 'posts');
+                    const data = videoResults.map(item => { return { url: item, fileType: "video" } })
+                    console.log(videoResults, data, 'o0o0o0o0o0o0oo00')
+                    results.push(...data);
+
+                }
+            }
+        }
+        return await this.postRepository.UploadPostDetails(results, posts.fields.text[0], userData._id);
+
+        // const value = data.fields.text[0]
+        // return await this.postRepository.UploadPostDetails(results, value, userData._id);
+    }
+
+    async savePosts(postData: any) {
         try {
             const savedPost = await this.postRepository.savePosts(postData);
-            if(savedPost){
+            if (savedPost) {
                 return savedPost
             }
         } catch (error) {
@@ -48,10 +85,10 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async PostLikes(userId:any,_id:any){
+    async PostLikes(userId: any, _id: any) {
         try {
-            const PostData = await this.postRepository.PostLikes(userId,_id)
-            if(PostData){
+            const PostData = await this.postRepository.PostLikes(userId, _id)
+            if (PostData) {
                 return PostData
             }
         } catch (error) {
@@ -59,11 +96,11 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async Comments(commentData:any){
+    async Comments(commentData: any) {
         try {
 
             const CommentData = await this.postRepository.Comments(commentData)
-            if(CommentData){
+            if (CommentData) {
                 return CommentData
             }
         } catch (error) {
@@ -71,10 +108,10 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async ReportedPosts(reason:string,postId:any){
+    async ReportedPosts(reason: string, postId: any) {
         try {
-            const ReportedPost = await this.postRepository.ReportedPosts(reason,postId)
-            if(ReportedPost){
+            const ReportedPost = await this.postRepository.ReportedPosts(reason, postId)
+            if (ReportedPost) {
                 return ReportedPost
             }
         } catch (error) {
@@ -82,10 +119,10 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async CommentReplies(data:any,userId:string,reply:string){
+    async CommentReplies(data: any, userId: string, reply: string) {
         try {
-            const commentReply = await this.postRepository.CommentReplies(data,userId,reply);
-            if(commentReply){
+            const commentReply = await this.postRepository.CommentReplies(data, userId, reply);
+            if (commentReply) {
                 return commentReply
             }
         } catch (error) {
@@ -93,10 +130,10 @@ export class PostUsecases implements PostUsecasesInterface{
         }
     }
 
-    async CommentLike(comment:any,userId:string){
+    async CommentLike(comment: any, userId: string) {
         try {
-            const CommentLike = await this.postRepository.CommentLike(comment,userId)
-            if(CommentLike){
+            const CommentLike = await this.postRepository.CommentLike(comment, userId)
+            if (CommentLike) {
                 return CommentLike
             }
         } catch (error) {
@@ -105,11 +142,11 @@ export class PostUsecases implements PostUsecasesInterface{
     }
 
 
-    async AllUserPost(userid:string){
+    async AllUserPost(userid: string) {
         try {
             console.log("user use case")
             const UserPost = await this.postRepository.AllUserPost(userid);
-            if(UserPost){
+            if (UserPost) {
                 return UserPost
             }
         } catch (error) {
@@ -119,16 +156,16 @@ export class PostUsecases implements PostUsecasesInterface{
 
     async getUser(userEmail: string) {
         try {
-            
+
             return await this.postRepository.getUser(userEmail)
         } catch (error) {
             console.log(error)
         }
     }
 
-    async AllPostDetails(){
+    async AllPostDetails() {
         try {
-            const postData= await this.postRepository.AllPostDetails()
+            const postData = await this.postRepository.AllPostDetails()
             return postData
         } catch (error) {
             console.log(error)

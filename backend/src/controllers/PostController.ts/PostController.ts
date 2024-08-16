@@ -25,7 +25,6 @@ export class PostController {
         try {
             const postData = await this.multipartFormSubmission(req)
             const user = getPayload(req)
-            // console.log(postData.files,postData.fields)
             const UploadedPost = await this.PostUsecases.UploadPostDetails(postData, user?.email);
             if (UploadedPost) {
                 return res.status(200).json({ UploadedPost: UploadedPost })
@@ -38,7 +37,7 @@ export class PostController {
 
     async SaveUserPosts(req: Request, res: Response) {
         try {
-            const postData = req.body
+            const postData = req.body;
             // console.log(postData)
             const SavePost = await this.PostUsecases.savePosts(postData)
             if (SavePost) {
@@ -113,6 +112,18 @@ export class PostController {
         }
     }
 
+    async ExplorePosts(req:Request,res:Response){
+        try {
+            const AllPosts = await this.PostUsecases.ExplorePage();
+            if (AllPosts) {
+                return res.status(200).json({ AllPosts: AllPosts })
+            }
+            res.status(203).json({ message: 'Failed to fetch Posts' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async PostComment(req: Request, res: Response) {
         try {
             const datas = req.body
@@ -143,7 +154,6 @@ export class PostController {
     async PostReports(req: Request, res: Response) {
         try {
             const { report, postData } = req.body;
-            console.log(report, postData)
             const reportedPost = await this.PostUsecases.ReportedPosts(report, postData)
             if (reportedPost) {
                 return res.status(200).json({ reportedPost: reportedPost })

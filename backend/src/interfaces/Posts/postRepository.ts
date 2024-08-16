@@ -11,5 +11,7 @@ export interface PostRepositoryInterface{
     allPostReports();
     savePosts(postData:any);
     CommentLike(comment:any,userId:string);
-    CommentReplies(data:any,userId:string,reply:string)
+    CommentReplies(data:any,userId:string,reply:string);
+    ExplorePage();
+    
 }

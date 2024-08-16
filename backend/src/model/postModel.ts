@@ -16,11 +16,16 @@ const PostSchema = new mongoose.Schema({
     },
     likes: [String],
     Url:[{
-        type: [String],
-        trim: true,
-        minlength: 1,
-        maxlength: 2000
+        url: {
+            type: String,
+            required: true
+        },
+        fileType: {
+            type: String,
+            required: true
+        }
     }],
+    
     visibile:Boolean,
     createdAt:Date,
 }, {

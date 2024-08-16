@@ -20,6 +20,8 @@ postrouter.post('/comment',verifyToken,postControllers.PostComment.bind(postCont
 
 postrouter.get('/allComment',verifyToken,postControllers.AllComment.bind(postControllers));
 
+postrouter.get('/explore',verifyToken,postControllers.ExplorePosts.bind(postControllers));
+
 postrouter.post('/postReports',verifyToken,postControllers.PostReports.bind(postControllers));
 
 postrouter.get('/userAllPost',verifyToken,postControllers.AllUserPosts.bind(postControllers)); 

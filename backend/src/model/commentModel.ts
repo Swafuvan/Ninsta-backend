@@ -15,7 +15,8 @@ const ReplySchema = new mongoose.Schema({
         trim: true,
         minlength: 1,
         maxlength: 500
-    }
+    },
+    
 }, {
     timestamps: true
 });
