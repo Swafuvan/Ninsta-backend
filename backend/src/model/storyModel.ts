@@ -7,10 +7,16 @@ const storySchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    imageUrl: {
-        type: String,
-        required: true,
-    },
+    files: [{
+        type: {
+            type:String,
+            required:true,
+        },
+        fileURL:{
+            type:String,
+            required:true,
+        },
+    }],
     caption: {
         type: String,
         maxlength: 500,

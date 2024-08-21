@@ -87,7 +87,7 @@ export class PostRepository implements PostRepositoryInterface {
                     type: 'comment',
                     content: 'Commented on this Post',
                     senderId: userId,
-                }) 
+                })
                 return commentNotify
             }
         } catch (error) {

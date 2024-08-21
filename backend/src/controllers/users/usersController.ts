@@ -2,17 +2,31 @@ import { NextFunction, Request, Response } from 'express';
 import { userUsecaseInterface, } from '../../interfaces/users/userUsecases'
 import { generateToken, getPayload } from '../../helper/JWT';
 import { generateOtp } from '../../helper/nodemailer';
+import { Fields, Files ,IncomingForm } from 'formidable';
 
 export class UserController {
     constructor(private userUsecase: userUsecaseInterface) { }
 
+    multipartFormSubmission(req: Request) {
+        return new Promise((resolve, reject) => {
+            const form = new IncomingForm();
+            form.parse(req, async (err: Error | null, fields: Fields, files: Files) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    resolve({ files, fields });
+                }
+            });
+        });
+    }
 
     async loginUser(req: Request, res: Response, next: NextFunction) {
         try {
             let datas = req.body
             const userDetails = await this.userUsecase.loginUser(datas)
             if (userDetails) {
-                const token = generateToken(userDetails.email, userDetails.isAdmin)
+                const token = generateToken(userDetails.email, userDetails.isAdmin);
                 return res.status(200).json({ userDetails: userDetails, JWTtoken: token })
             }
             if (userDetails === null) {
@@ -111,9 +125,34 @@ export class UserController {
             console.log(userId);
             const userDetail = await this.userUsecase.userStories(userId + '');
             if (userDetail) {
-                return res.status(200).json({ userDetail: userDetail })
+                // return res.status(200).json({ userDetail: userDetail })
             }
-            res.status(205).json({ message: 'Failed to fetch user stories' })
+            // res.status(205).json({ message: 'Failed to fetch user stories' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserReels(req:Request,res:Response){
+        try {
+            const allReels = await this.userUsecase.allReels();
+            if (allReels) {
+                return res.status(200).json({ allReels: allReels })
+            }
+            return res.status(205).json({ message: 'Failed to fetch all reels' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async EditUserProfile(req:Request,res:Response){
+        try {
+            const {userId,userDetails} = req.body;
+            const userDatas = await this.userUsecase.userProfileEdit(userId,userDetails);
+            if (userDatas) {
+                return res.status(200).json({ userDatas: userDatas })
+            }
+            return res.status(205).json({ message: 'Failed to update user profile' });
         } catch (error) {
             console.log(error);
         }
@@ -121,12 +160,14 @@ export class UserController {
 
     async UserStoryAdding(req: Request, res: Response) {
         try {
-            const userId = req.body;
-            const userStory = await this.userUsecase.StoryAdding(userId);
-            if (userStory) {
-                return res.status(200).json({ userStory:userStory })
-            }
-            return res.status(205).json({ message: 'Failed to add story' });
+            console.log(req.body)
+            const storyData = await this.multipartFormSubmission(req.body);
+            console.log(storyData,'====================================')
+            // const userStory = await this.userUsecase.StoryAdding(storyData+'');
+            // if (userStory) {
+                // return res.status(200).json({ userStory:userStory })
+            // }
+            // return res.status(205).json({ message: 'Failed to add story' });
 
         } catch (error) {
 

@@ -23,5 +23,7 @@ export interface userRepositoryInterface {
     StoryAdding(userId:string);
     allUserMessages(userId:string);
     userNotifications(userId:string);
+    userProfileEdit(userId:string,userData:any);
+    allReels();
 
 }

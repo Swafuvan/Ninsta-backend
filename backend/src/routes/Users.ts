@@ -45,9 +45,13 @@ userRouter.post('/userStory',verifyToken,userController.UserStoryAdding.bind(use
 
 userRouter.post('/reportUser',verifyToken,userController.UserReporting.bind(userController));
 
+userRouter.get('/userReels',verifyToken,userController.UserReels.bind(userController));
+
 userRouter.get('/userSearch',verifyToken,userController.userSearchDetails.bind(userController));
 
-userRouter.post('/forgotPassword',userController.ForgotPassword.bind(userController))
+userRouter.post('/forgotPassword',userController.ForgotPassword.bind(userController));
+
+userRouter.post('/editProfile',verifyToken,userController.EditUserProfile.bind(userController));
 
 userRouter.post('/googleSignup',userController.googleSignup.bind(userController))
 

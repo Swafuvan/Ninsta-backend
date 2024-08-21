@@ -8,11 +8,12 @@ import { SavePost } from '../../model/savePostModel';
 import { UserReports } from '../../model/userReportModel';
 import { Story } from '../../model/storyModel';
 import { Notification } from '../../model/notificationModel';
+import { Posts } from '../../model/postModel';
 
 export class userRepository implements userRepositoryInterface {
     async userFindById(userid: string) {
         try {
-            const userDetails = await Users.findById(userid)
+            const userDetails = await Users.findById(userid);
             if (userDetails) {
                 return userDetails
             }
@@ -71,7 +72,7 @@ export class userRepository implements userRepositoryInterface {
                 })
                 return NotificationData
             }
-        } catch (error) {
+        } catch (error) { 
             console.log(error);
         }
     }
@@ -96,7 +97,6 @@ export class userRepository implements userRepositoryInterface {
     async loginUser(datas: Loginuser): Promise<userObj | null> {
         try {
             console.log(datas.email, datas.password);
-
             const userDetails = await Users.findOne({ email: datas.email, isBlocked: false });
             if (userDetails) {
                 return userDetails as userObj
@@ -123,8 +123,11 @@ export class userRepository implements userRepositoryInterface {
         try {
             const addedStory = await Story.create({
                 user: userId,
-                imageUrl: '',
                 caption: '',
+                files:[{
+                    type:'',
+                    fileURL:''
+                }]
 
             })
         } catch (error) {
@@ -147,6 +150,41 @@ export class userRepository implements userRepositoryInterface {
             return null
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    async allReels() {
+        try {
+            const allReelsRes = await Posts.find({});
+            if (allReelsRes) {
+                const Reels = allReelsRes.filter((data)=>{
+                    if(data.Url[0].fileType === 'video'){
+                        return data
+                    }
+                })
+                console.log(Reels);
+                return Reels
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async userProfileEdit(userId:string,userData: any) {
+        try {
+            console.log(userId,userData);
+            // const userRes = await Users.findByIdAndUpdate(userId,{
+            //     $set:{
+            //         bio:userData.bio,
+            //         fullName:userData.fullName,
+            //         Gender:userData.Gender,
+            //         DOB:userData.DOB,
+            //         username:userData.username,
+            //     }
+            // });
+            // console.log(userRes)
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -288,7 +326,7 @@ export class userRepository implements userRepositoryInterface {
     async googleSignup(userData: googleUser) {
         try {
             console.log(userData);
-            const createdUser = await Users.insertMany({
+            const createdUser = await Users.create({
                 fullName: userData.fullName,
                 email: userData.email,
                 username: userData.username,

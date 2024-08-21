@@ -15,12 +15,10 @@ export class userUsecase implements userUsecaseInterface {
             let result = await this.userRepository.loginUser(datas);
             if (result) {
                 let compared = await bcrypt.compare(datas.password,result?.password);
-
                 if (compared) {
                     console.log('password match');
                     return result
                 }
-                
             }
             return null
         } catch (error) {
@@ -224,14 +222,33 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
+    async userProfileEdit(userId:string,userData: any) {
+        try {
+            const userEdited = await this.userRepository.userProfileEdit(userId,userData);
+            if(userEdited){
+                return userEdited
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async allReels() {
+        try {
+            const reelsfind = await this.userRepository.allReels();
+            if(reelsfind){
+                return reelsfind
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
     
     async GoogleSignup(UserData:googleUser){
         try {
             UserData.password = await bcrypt.hash(UserData.password, 12)
             const userResult = await this.userRepository.googleSignup(UserData)
-
             console.log(userResult);
-            
             return userResult
         } catch (error) {
             console.log(error);
