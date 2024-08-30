@@ -41,7 +41,11 @@ userRouter.get('/AllUsers',verifyToken,userController.AllUserDetails.bind(userCo
 
 userRouter.get('/stories',verifyToken,userController.UserFriendsStories.bind(userController));
 
+userRouter.get('/ownStory',verifyToken,userController.OwnStoryFind.bind(userController));
+
 userRouter.post('/userStory',verifyToken,userController.UserStoryAdding.bind(userController));
+
+userRouter.post('/videoStory',verifyToken,userController.UserVideoStory.bind(userController));
 
 userRouter.post('/reportUser',verifyToken,userController.UserReporting.bind(userController));
 

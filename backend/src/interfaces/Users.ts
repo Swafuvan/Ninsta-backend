@@ -12,6 +12,11 @@ export interface userObj{
     isBlocked:boolean,
 }
 
+export interface ImageData {
+    filepath: string;
+    base64?:any
+}
+
 export interface userMessage{
     _id?:string;
     from: string;

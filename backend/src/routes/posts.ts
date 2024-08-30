@@ -10,7 +10,9 @@ const postControllers = new PostController(PostUsecase)
 const postrouter = express.Router();
 
 
-postrouter.post('/Posts',verifyToken,postControllers.UploadPosts.bind(postControllers))
+postrouter.post('/Posts',verifyToken,postControllers.UploadPosts.bind(postControllers));
+
+postrouter.post('/uploadVideos',verifyToken,postControllers.VideoUploadPost.bind(postControllers));
 
 postrouter.get('/allPosts',verifyToken,postControllers.AllPostData.bind(postControllers))
 

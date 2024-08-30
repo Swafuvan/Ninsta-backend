@@ -42,13 +42,36 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
+    async messageNotification(notification: any) {
+        try {
+            console.log(notification, 'ethittta');
+            const notify = await Notification.findOne({ senderId: notification.from, userId: notification.to, type: 'message', content: notification.message });
+            console.log(notify,notification.message);
+            if (notify) {
+                console.log('already send')
+            } else {
+                const NotificationResponse = await Notification.create({
+                    senderId: notification.from,
+                    userId: notification.to,
+                    content: notification.message,
+                    type: 'message'
+                })
+                if (NotificationResponse) {
+                    console.log(NotificationResponse);
+                    return NotificationResponse
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async userNotifications(userId: string) {
         try {
             const userNotific = await Notification.find({ userId: userId }).populate('userId')
-            .populate('senderId').populate('postId')
-            .sort({ createdAt: -1 }).limit(6);
+                .populate('senderId').populate('postId')
+                .sort({ createdAt: -1 }).limit(6);
             if (userNotific) {
-                console.log(userNotific);
                 return userNotific
             }
             return null
@@ -60,19 +83,19 @@ export class userRepository implements userRepositoryInterface {
     async userNotification(userId: string, friendId: any) {
         try {
             console.log(userId, friendId)
-            const userFollow = await Notification.findOne({userId:friendId._id,senderId:userId,type:'follow'})
-            if(userFollow){
+            const userFollow = await Notification.findOne({ userId: friendId._id, senderId: userId, type: 'follow' })
+            if (userFollow) {
                 console.log('already user follow')
-            }else{
+            } else {
                 const NotificationData = await Notification.create({
-                    userId: friendId._id+'',
-                    senderId: userId+'',
+                    userId: friendId._id + '',
+                    senderId: userId + '',
                     content: 'Followed You',
                     type: 'follow',
                 })
                 return NotificationData
             }
-        } catch (error) { 
+        } catch (error) {
             console.log(error);
         }
     }
@@ -110,7 +133,9 @@ export class userRepository implements userRepositoryInterface {
 
     async userStories(userId: string) {
         try {
-            const userDetails = await Story.find({ _id: { $ne: userId } });
+            console.log(userId,'00000000');
+            const userDetails = await Story.find({ user: { $ne: userId } }).populate('user');
+            console.log(userDetails);
             if (userDetails) {
                 return userDetails
             }
@@ -119,17 +144,40 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
-    async StoryAdding(userId: string) {
+    async StoryAdding(storyData:any,userId: string,content:string) {
         try {
+            console.log(storyData[0],userId[0],content[0],'90909009090900')
             const addedStory = await Story.create({
-                user: userId,
-                caption: '',
-                files:[{
-                    type:'',
-                    fileURL:''
+                user: userId[0],
+                caption: content[0],
+                files: [{
+                    type: storyData[0].fileType,
+                    fileURL: storyData[0].url
                 }]
-
             })
+            if(addedStory){
+                console.log(addedStory);
+                return addedStory
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async VideoStory(story: string, userId: string, text: string) {
+        try {
+            const StoryData = await Story.create({
+                user:userId,
+                files:[{
+                    fileURL:story,
+                    type:'video'
+                }],
+                caption: text
+            })
+            if(StoryData){
+                console.log(StoryData);
+                return StoryData;
+            }
         } catch (error) {
             console.log(error);
         }
@@ -157,8 +205,8 @@ export class userRepository implements userRepositoryInterface {
         try {
             const allReelsRes = await Posts.find({});
             if (allReelsRes) {
-                const Reels = allReelsRes.filter((data)=>{
-                    if(data.Url[0].fileType === 'video'){
+                const Reels = allReelsRes.filter((data) => {
+                    if (data.Url[0].fileType === 'video') {
                         return data
                     }
                 })
@@ -170,19 +218,23 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
-    async userProfileEdit(userId:string,userData: any) {
+    async userProfileEdit( userData: any,userId:string,userImage:any) {
         try {
-            console.log(userId,userData);
-            // const userRes = await Users.findByIdAndUpdate(userId,{
-            //     $set:{
-            //         bio:userData.bio,
-            //         fullName:userData.fullName,
-            //         Gender:userData.Gender,
-            //         DOB:userData.DOB,
-            //         username:userData.username,
-            //     }
-            // });
-            // console.log(userRes)
+            console.log( userData,userId,userImage,userData.username);
+            const userRes = await Users.findByIdAndUpdate(userId,{
+                $set:{
+                    bio:userData.bio,
+                    fullName:userData.fullName,
+                    Gender:userData.Gender,
+                    DOB:userData.DOB,
+                    username:userData.username,
+                    image:userImage
+                }
+            },{new:true});
+            console.log(userRes)
+            if(userRes){
+                return userRes
+            }
         } catch (error) {
             console.log(error);
         }
@@ -251,6 +303,18 @@ export class userRepository implements userRepositoryInterface {
                 await val.save()
             })
             return userRes.map((usr) => usr._id)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async ownStory(userId: string) {
+        try {
+            const ownstory = await Story.findOne({user:userId}).populate('user');
+            if(ownstory){
+                console.log(ownstory);
+                return ownstory;
+            }
         } catch (error) {
             console.log(error);
         }
@@ -398,8 +462,6 @@ export class userRepository implements userRepositoryInterface {
                 ]
             }).populate('to').populate('from').sort({ time: -1 });
             if (userMessages) {
-
-                console.log(userMessages)
                 return userMessages
             }
             return null

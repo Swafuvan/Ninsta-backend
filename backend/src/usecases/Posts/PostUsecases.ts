@@ -36,33 +36,23 @@ export class PostUsecases implements PostUsecasesInterface {
         }
     }
 
-    async UploadPostDetails(posts: any, user: any) {
+    async UploadPostDetails(posts: any, user: any,) {
 
-        const data = posts
         const userData = await this.getUser(user);
         const results: { url: string; fileType: string }[] = [];
-        console.log(posts.files, posts.fields, '00000000000000000000000')
+        console.log(posts.files, posts.fields);
         for (const key in posts.fields) {
             if (key !== 'text') {
                 if (posts.fields[key][0] === "image") {
                     console.log(posts.fields[key][0])
                     const imageData = {
-                        files: posts.files['PostFiles[0][file]'],
+                        files: posts.files['PostFiles[file]'],
                         fileType: posts.fields[key][0],
                     }
+                    console.log(imageData);
                     const imageResults = await uploadImages(imageData.files, 'posts');
                     const data = imageResults.map(item => { return { url: item, fileType: "image" } })
                     console.log(imageResults, data, 'o0o0o0o0o0o0oo00')
-                    results.push(...data);
-
-                } else {
-                    const videoData = {
-                        files: posts.files['PostFiles[0][file]'],
-                        fileType: posts.fields[key][0],
-                    }
-                    const videoResults = await uploadImages(videoData.files, 'posts');
-                    const data = videoResults.map(item => { return { url: item, fileType: "video" } })
-                    console.log(videoResults, data, 'o0o0o0o0o0o0oo00')
                     results.push(...data);
 
                 }
@@ -72,6 +62,17 @@ export class PostUsecases implements PostUsecasesInterface {
 
         // const value = data.fields.text[0]
         // return await this.postRepository.UploadPostDetails(results, value, userData._id);
+    }
+
+    async UploadVideos(data: any, text: string,user:string) {
+        try {
+            const postDatas = await this.postRepository.UploadVideos(data,text,user);
+            if (postDatas) {
+                return postDatas
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async savePosts(postData: any) {

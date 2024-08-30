@@ -19,10 +19,12 @@ export interface userUsecaseInterface {
     userReporting(reason: string, userId: string, reportedId: string);
     userBlocking(userId:string,blockerId:string);
     userStories(userId:string);
-    StoryAdding(userId:string);
+    StoryAdding(story:any);
+    VideoStory(story:string,userId:string,text:string);
+    ownStory(userId:string);
     allUserMessages(userId:string);
     userNotifications(userId:string);
-    userProfileEdit(userId:string,userData:any);
+    userProfileEdit(userData:any,userImage:any,userId:any);
     allReels();
 
 }

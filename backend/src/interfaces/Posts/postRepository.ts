@@ -13,5 +13,6 @@ export interface PostRepositoryInterface{
     CommentLike(comment:any,userId:string);
     CommentReplies(data:any,userId:string,reply:string);
     ExplorePage();
+    UploadVideos(data:any,text:string,user:string);
     
 }

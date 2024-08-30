@@ -24,10 +24,27 @@ export class PostController {
     async UploadPosts(req: Request, res: Response) {
         try {
             const postData = await this.multipartFormSubmission(req)
+            console.log(postData)
             const user = getPayload(req)
             const UploadedPost = await this.PostUsecases.UploadPostDetails(postData, user?.email);
             if (UploadedPost) {
                 return res.status(200).json({ UploadedPost: UploadedPost })
+            }
+            res.status(203).json({ message: 'Sorry buddy' })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async VideoUploadPost(req:Request,res:Response){
+        try {
+            const {text,data} = req.body;
+            console.log(text,data,'0000000000000000000');
+            const user = getPayload(req);
+            console.log(user,'0909099090900909');
+            const userPostDetails = await this.PostUsecases.UploadVideos(data,text,user?.email+'');
+            if (userPostDetails) {
+                return res.status(200).json({ userPostDetails: userPostDetails })
             }
             res.status(203).json({ message: 'Sorry buddy' })
         } catch (error) {

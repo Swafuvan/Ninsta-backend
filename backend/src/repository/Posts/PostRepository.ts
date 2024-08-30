@@ -114,6 +114,27 @@ export class PostRepository implements PostRepositoryInterface {
         }
     }
 
+    async UploadVideos(data: any, text: string,user:string) {
+        try {
+            const userDetail = await Users.findOne({email:user});
+            const postresponse = await Posts.insertMany([{
+                userId:userDetail?._id+'',
+                likes:[],
+                visibile:false,
+                Url:[{
+                    url:data,
+                    fileType:'video'
+                }],
+                content:text+''
+            }]);
+            if (postresponse) {
+                return postresponse
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async ReportedPosts(reason: string, postdata: any) {
         try {
             const { postId, userId } = postdata

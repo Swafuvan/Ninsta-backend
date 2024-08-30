@@ -20,10 +20,13 @@ export interface userRepositoryInterface {
     userReporting(reason: string, userId: string, reportedId: string)
     userBlocking(userId:string,blockerId:string);
     userStories(userId:string);
-    StoryAdding(userId:string);
+    StoryAdding(story:any,userId:string,text:string);
+    VideoStory(story:string,userId:string,text:string);
+    ownStory(userId:string);
     allUserMessages(userId:string);
     userNotifications(userId:string);
-    userProfileEdit(userId:string,userData:any);
+    userProfileEdit(userData:any,userId:string,images:any);
     allReels();
+    messageNotification(notification:any);
 
 }
