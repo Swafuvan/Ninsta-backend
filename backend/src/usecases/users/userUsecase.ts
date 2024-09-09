@@ -264,12 +264,9 @@ export class userUsecase implements userUsecaseInterface {
     }
 
     async userProfileEdit(userData: any,userImage:any,userId:any) {
-        
         try {
-            console.log(userImage);
             // const buffer = Buffer.from(userImage, 'base64');
             const imageResults = await profileUpload({base64:userImage}, 'ProfileImage');
-            console.log(imageResults,'9i9i99i999999999999999')
             const userEdited = await this.userRepository.userProfileEdit(userData,userId,imageResults.secure_url);
             if (userEdited) {
                 return userEdited

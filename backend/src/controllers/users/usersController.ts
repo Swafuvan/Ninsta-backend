@@ -180,7 +180,6 @@ export class UserController {
             const profileData = await this.multipartFormSubmission(req);
             let userData = profileData?.fields?.userDetails as string[]
             const userDetail = JSON.parse(userData[0] as string)
-            console.log(userDetail,'8888888888888888888888888');
             const userImage = profileData?.fields.userData
             const userId = profileData?.fields.userId
             const userDatas = await this.userUsecase.userProfileEdit(userDetail,userImage,userId);

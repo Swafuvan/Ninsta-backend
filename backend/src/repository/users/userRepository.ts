@@ -46,7 +46,6 @@ export class userRepository implements userRepositoryInterface {
         try {
             console.log(notification, 'ethittta');
             const notify = await Notification.findOne({ senderId: notification.from, userId: notification.to, type: 'message', content: notification.message });
-            console.log(notify,notification.message);
             if (notify) {
                 console.log('already send')
             } else {
@@ -57,7 +56,6 @@ export class userRepository implements userRepositoryInterface {
                     type: 'message'
                 })
                 if (NotificationResponse) {
-                    console.log(NotificationResponse);
                     return NotificationResponse
                 }
             }
@@ -82,7 +80,6 @@ export class userRepository implements userRepositoryInterface {
 
     async userNotification(userId: string, friendId: any) {
         try {
-            console.log(userId, friendId)
             const userFollow = await Notification.findOne({ userId: friendId._id, senderId: userId, type: 'follow' })
             if (userFollow) {
                 console.log('already user follow')
@@ -135,7 +132,6 @@ export class userRepository implements userRepositoryInterface {
         try {
             console.log(userId,'00000000');
             const userDetails = await Story.find({ user: { $ne: userId } }).populate('user');
-            console.log(userDetails);
             if (userDetails) {
                 return userDetails
             }
@@ -146,7 +142,6 @@ export class userRepository implements userRepositoryInterface {
 
     async StoryAdding(storyData:any,userId: string,content:string) {
         try {
-            console.log(storyData[0],userId[0],content[0],'90909009090900')
             const addedStory = await Story.create({
                 user: userId[0],
                 caption: content[0],
@@ -156,7 +151,6 @@ export class userRepository implements userRepositoryInterface {
                 }]
             })
             if(addedStory){
-                console.log(addedStory);
                 return addedStory
             }
         } catch (error) {
@@ -175,7 +169,6 @@ export class userRepository implements userRepositoryInterface {
                 caption: text
             })
             if(StoryData){
-                console.log(StoryData);
                 return StoryData;
             }
         } catch (error) {
@@ -210,7 +203,6 @@ export class userRepository implements userRepositoryInterface {
                         return data
                     }
                 })
-                console.log(Reels);
                 return Reels
             }
         } catch (error) {
@@ -231,7 +223,6 @@ export class userRepository implements userRepositoryInterface {
                     image:userImage
                 }
             },{new:true});
-            console.log(userRes)
             if(userRes){
                 return userRes
             }
@@ -261,7 +252,6 @@ export class userRepository implements userRepositoryInterface {
                     }
                     await followingData.save();
                     const notificationAdd = await this.userNotification(userId, friendId);
-                    console.log(notificationAdd);
                 }
 
                 return { followerData, followingData }
@@ -284,7 +274,6 @@ export class userRepository implements userRepositoryInterface {
                 },
                 time: message.time
             })
-            console.log(userChat)
             if (userChat) {
                 return userChat
             }
@@ -312,7 +301,6 @@ export class userRepository implements userRepositoryInterface {
         try {
             const ownstory = await Story.findOne({user:userId}).populate('user');
             if(ownstory){
-                console.log(ownstory);
                 return ownstory;
             }
         } catch (error) {

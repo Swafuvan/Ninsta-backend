@@ -9,7 +9,9 @@ export class adminRepository implements adminRepositoryInterface {
     async postReportAction(postData: any) {
         try {
             const postReport = await PostReports.findById(postData._id)
+            console.log(postReport,'=============================---------------')
             const postChange = await Posts.findById(postReport?.postId)
+            console.log(postChange,'-0-0--0-0-0-0-0-0-0-0-0-0-0-0--0-0-0-0')
             if (postChange) {
                 postChange.visibile = !postChange.visibile
                 await postChange.save()
@@ -25,7 +27,7 @@ export class adminRepository implements adminRepositoryInterface {
 
     async userReportAction(data:any){
         try {
-            console.log(data._id)
+            console.log(data)
             const userDetails = await UserReports.findById(data._id);
             console.log(userDetails,'-------------------------------');
             if (userDetails) {
@@ -40,7 +42,6 @@ export class adminRepository implements adminRepositoryInterface {
                 }
                 return userDetails
             }
-            
         } catch (error) {
             console.log(error);
         }
