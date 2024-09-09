@@ -1,7 +1,7 @@
 import { adminRepositoryInterface } from "../../interfaces/admin/adminRepository";
 import { AdminUsecasesInterface } from "../../interfaces/admin/adminUseCases";
 import { Loginuser, userObj } from "../../interfaces/Users";
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 
 

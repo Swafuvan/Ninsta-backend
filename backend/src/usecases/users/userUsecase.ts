@@ -3,7 +3,7 @@ import { userRepositoryInterface } from "../../interfaces/users/userRepository";
 import { userUsecaseInterface } from "../../interfaces/users/userUsecases";
 import { userObj, Loginuser, OTPData, googleUser, forgotPassword, ImageData } from '../../interfaces/Users'
 import { sendOtpEmail, generateOtp } from '../../helper/nodemailer'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { profileUpload, uploadImage, uploadImages } from "../../helper/cloudinary";
 
 
