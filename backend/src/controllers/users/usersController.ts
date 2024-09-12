@@ -9,20 +9,6 @@ import { uploadImages } from '../../helper/cloudinary';
 export class UserController {
     constructor(private userUsecase: userUsecaseInterface) { }
 
-    // multipartFormSubmission(req: Request) {
-    //     return new Promise((resolve, reject) => {
-    //         const form = new IncomingForm();
-    //         form.parse(req, async (err: Error | null, fields: Fields, files: Files) => {
-    //             if (err) {
-    //                 console.log(err);
-    //                 reject(err);
-    //             } else {
-    //                 resolve({ files, fields });
-    //             }
-    //         });
-    //     });
-    // }
-
     multipartFormSubmission(req: Request): Promise<{ fields: Fields<any>, files: Files }> {
         return new Promise((resolve, reject) => {
             const form = new IncomingForm();
@@ -47,8 +33,11 @@ export class UserController {
                 const token = generateToken(userDetails.email, userDetails.isAdmin);
                 return res.status(200).json({ userDetails: userDetails, JWTtoken: token })
             }
-            if (userDetails === null) {
+            if (userDetails === false) {
                 return res.status(206).json({ message: "Your account is blocked" });
+            }
+            if (userDetails === null) {
+                return res.status(206).json({ message: "Entered wrong password" });
             }
             res.status(203).json({ message: "User Not Found", });
         } catch (error) {

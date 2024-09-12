@@ -12,9 +12,14 @@ export class userUsecase implements userUsecaseInterface {
     constructor(private userRepository: userRepositoryInterface) { }
 
 
-    async loginUser(datas: Loginuser): Promise<any> {
+    async loginUser(datas: Loginuser) {
         try {
             let result = await this.userRepository.loginUser(datas);
+            console.log(result)
+            if (result.isBlocked) {
+                console.log('password not match');
+                return result = false;
+            }
             if (result) {
                 let compared = await bcrypt.compare(datas.password, result?.password);
                 if (compared) {
@@ -118,10 +123,10 @@ export class userUsecase implements userUsecaseInterface {
                         const imageResults = await uploadImages(imageData.files, 'Stories');
                         const data = imageResults.map(item => { return { url: item, fileType: "image" } })
                         results.push(...data);
-                    } 
+                    }
                 }
             }
-            const storyData = await this.userRepository.StoryAdding(results,userId,text);
+            const storyData = await this.userRepository.StoryAdding(results, userId, text);
             if (storyData) {
                 return storyData
             }
@@ -132,8 +137,8 @@ export class userUsecase implements userUsecaseInterface {
 
     async VideoStory(story: string, userId: string, text: string) {
         try {
-            const userStory = await this.userRepository.VideoStory(story,userId,text);
-            if(userStory){
+            const userStory = await this.userRepository.VideoStory(story, userId, text);
+            if (userStory) {
                 return userStory
             }
         } catch (error) {
@@ -263,11 +268,11 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
-    async userProfileEdit(userData: any,userImage:any,userId:any) {
+    async userProfileEdit(userData: any, userImage: any, userId: any) {
         try {
             // const buffer = Buffer.from(userImage, 'base64');
-            const imageResults = await profileUpload({base64:userImage}, 'ProfileImage');
-            const userEdited = await this.userRepository.userProfileEdit(userData,userId,imageResults.secure_url);
+            const imageResults = await profileUpload({ base64: userImage }, 'ProfileImage');
+            const userEdited = await this.userRepository.userProfileEdit(userData, userId, imageResults.secure_url);
             if (userEdited) {
                 return userEdited
             }

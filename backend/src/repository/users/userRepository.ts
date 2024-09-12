@@ -117,7 +117,7 @@ export class userRepository implements userRepositoryInterface {
     async loginUser(datas: Loginuser): Promise<userObj | null> {
         try {
             console.log(datas.email, datas.password);
-            const userDetails = await Users.findOne({ email: datas.email, isBlocked: false });
+            const userDetails = await Users.findOne({ email: datas.email});
             if (userDetails) {
                 return userDetails as userObj
             }

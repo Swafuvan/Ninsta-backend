@@ -4,7 +4,7 @@ import { Loginuser, userObj, OTPData, googleUser, forgotPassword, userMessage } 
 export interface userRepositoryInterface {
     getUser(userEmail: String): Promise<userObj | null>
     signupUser(user: userObj): Promise<userObj | null>
-    loginUser(datas: Loginuser): Promise<userObj | null>
+    loginUser(datas: Loginuser): Promise<any | null>
     OTPAddDatabase(email: string, otp: string): Promise<boolean>
     OTPChecking(OTPData): Promise<userObj | null>
     googleSignup(userData: googleUser)
