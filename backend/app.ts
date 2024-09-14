@@ -17,7 +17,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_API,
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -26,7 +26,7 @@ ConnectToSocket(io)
 
 app.use(morgan('dev'));
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.FRONTEND_API,
   credentials: true
 }));
 
