@@ -55,6 +55,8 @@ userRouter.get('/userSearch',verifyToken,userController.userSearchDetails.bind(u
 
 userRouter.post('/forgotPassword',userController.ForgotPassword.bind(userController));
 
+userRouter.get('/allUserMessage',verifyToken,userController.AllMessages.bind(userController));
+
 userRouter.post('/editProfile',verifyToken,userController.EditUserProfile.bind(userController));
 
 userRouter.post('/googleSignup',userController.googleSignup.bind(userController))

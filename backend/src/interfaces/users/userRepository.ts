@@ -28,5 +28,6 @@ export interface userRepositoryInterface {
     userProfileEdit(userData:any,userId:string,images:any);
     allReels();
     messageNotification(notification:any);
+    allMessage(userId:string)
 
 }

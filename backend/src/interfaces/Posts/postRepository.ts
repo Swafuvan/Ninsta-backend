@@ -14,5 +14,7 @@ export interface PostRepositoryInterface{
     CommentReplies(data:any,userId:string,reply:string);
     ExplorePage();
     UploadVideos(data:any,text:string,user:string);
+    DeleteUserPost(post:any);
+    EditPostDetails(postId:any,content:string);
     
 }

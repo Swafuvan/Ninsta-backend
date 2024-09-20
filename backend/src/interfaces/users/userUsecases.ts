@@ -26,5 +26,6 @@ export interface userUsecaseInterface {
     userNotifications(userId:string);
     userProfileEdit(userData:any,userImage:any,userId:any);
     allReels();
+    allMessage(userId:string)
 
 }

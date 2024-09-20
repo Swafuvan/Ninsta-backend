@@ -34,6 +34,10 @@ postrouter.post('/commentReply',verifyToken,postControllers.ReplyComments.bind(p
 
 postrouter.post('/commentLike',verifyToken,postControllers.CommentLikes.bind(postControllers));
 
+postrouter.delete('/deletePost',verifyToken,postControllers.UserDeletePost.bind(postControllers));
+
+postrouter.put('/editPost',verifyToken,postControllers.EditPostData.bind(postControllers));
+
 postrouter.get('/AllPostReports',verifyToken,postControllers.AllPostReports.bind(postControllers));
 
 export default postrouter

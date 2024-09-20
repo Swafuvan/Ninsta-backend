@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { userUsecaseInterface, } from '../../interfaces/users/userUsecases'
 import { generateToken, getPayload } from '../../helper/JWT';
 import { generateOtp } from '../../helper/nodemailer';
-import { Fields, Files ,IncomingForm } from 'formidable';
+import { Fields, Files, IncomingForm } from 'formidable';
 import { uploadImages } from '../../helper/cloudinary';
 
 
@@ -17,13 +17,13 @@ export class UserController {
                     console.log(err);
                     reject(err);
                 } else {
-                    console.log(fields,files)
+                    console.log(fields, files)
                     resolve({ files, fields });
                 }
             });
         });
     }
-    
+
 
     async loginUser(req: Request, res: Response, next: NextFunction) {
         try {
@@ -113,10 +113,10 @@ export class UserController {
         }
     }
 
-    async AllUserMessages(req:Request,res:Response){
+    async AllUserMessages(req: Request, res: Response) {
         try {
             const userId = req.query.userId;
-            const userMessages = await this.userUsecase.allUserMessages(userId+'');
+            const userMessages = await this.userUsecase.allUserMessages(userId + '');
             if (userMessages) {
                 return res.status(200).json({ userMessages: userMessages })
             }
@@ -126,10 +126,10 @@ export class UserController {
         }
     }
 
-    async OwnStoryFind(req:Request,res:Response){
+    async OwnStoryFind(req: Request, res: Response) {
         try {
             const userId = req.query.userId;
-            const userOwnStory = await this.userUsecase.ownStory(userId+'');
+            const userOwnStory = await this.userUsecase.ownStory(userId + '');
             if (userOwnStory) {
                 return res.status(200).json({ userOwnStory: userOwnStory })
             }
@@ -152,7 +152,7 @@ export class UserController {
         }
     }
 
-    async UserReels(req:Request,res:Response){
+    async UserReels(req: Request, res: Response) {
         try {
             const allReels = await this.userUsecase.allReels();
             if (allReels) {
@@ -164,14 +164,14 @@ export class UserController {
         }
     }
 
-    async EditUserProfile(req:Request,res:Response){
+    async EditUserProfile(req: Request, res: Response) {
         try {
             const profileData = await this.multipartFormSubmission(req);
             let userData = profileData?.fields?.userDetails as string[]
             const userDetail = JSON.parse(userData[0] as string)
             const userImage = profileData?.fields.userData
             const userId = profileData?.fields.userId
-            const userDatas = await this.userUsecase.userProfileEdit(userDetail,userImage,userId);
+            const userDatas = await this.userUsecase.userProfileEdit(userDetail, userImage, userId);
             if (userDatas) {
                 return res.status(200).json({ userDatas: userDatas })
             }
@@ -184,10 +184,10 @@ export class UserController {
     async UserStoryAdding(req: Request, res: Response) {
         try {
             const storyData = await this.multipartFormSubmission(req);
-            console.log(storyData,'====================================');
+            console.log(storyData, '====================================');
             const userStory = await this.userUsecase.StoryAdding(storyData);
             if (userStory) {
-                return res.status(200).json({ userStory:userStory })
+                return res.status(200).json({ userStory: userStory })
             }
             return res.status(205).json({ message: 'Failed to add story' });
 
@@ -196,10 +196,10 @@ export class UserController {
         }
     }
 
-    async UserVideoStory(req:Request,res:Response){
+    async UserVideoStory(req: Request, res: Response) {
         try {
-            const {userId, story, content} = req.body;
-            const userStory = await this.userUsecase.VideoStory(story,userId,content);
+            const { userId, story, content } = req.body;
+            const userStory = await this.userUsecase.VideoStory(story, userId, content);
             if (userStory) {
                 return res.status(200).json({ userStory: userStory })
             }
@@ -238,10 +238,10 @@ export class UserController {
         }
     }
 
-    async userNotification(req:Request,res:Response){
+    async userNotification(req: Request, res: Response) {
         try {
             const userId = req.query.userId;
-            const userResult = await this.userUsecase.userNotifications(userId+'');
+            const userResult = await this.userUsecase.userNotifications(userId + '');
             if (userResult) {
                 return res.status(200).json({ userResult: userResult })
             }
@@ -332,6 +332,19 @@ export class UserController {
         }
     }
 
+    async AllMessages(req: Request, res: Response) {
+        try {
+            const userid = req.query.userId;
+            const allmessages = await this.userUsecase.allMessage(userid+'');
+            if (allmessages) {
+                return res.status(200).json({ allmessages:allmessages });
+            }
+            return res.status(205).json({ message: 'No Messages Found' });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async userSearchDetails(req: Request, res: Response) {
         try {
             const { search, userId } = req.query
@@ -373,7 +386,6 @@ export class UserController {
 
         }
     }
-
 
 }
 

@@ -117,7 +117,7 @@ export class userRepository implements userRepositoryInterface {
     async loginUser(datas: Loginuser): Promise<userObj | null> {
         try {
             console.log(datas.email, datas.password);
-            const userDetails = await Users.findOne({ email: datas.email});
+            const userDetails = await Users.findOne({ email: datas.email });
             if (userDetails) {
                 return userDetails as userObj
             }
@@ -130,7 +130,7 @@ export class userRepository implements userRepositoryInterface {
 
     async userStories(userId: string) {
         try {
-            console.log(userId,'00000000');
+            console.log(userId, '00000000');
             const userDetails = await Story.find({ user: { $ne: userId } }).populate('user');
             if (userDetails) {
                 return userDetails
@@ -140,7 +140,7 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
-    async StoryAdding(storyData:any,userId: string,content:string) {
+    async StoryAdding(storyData: any, userId: string, content: string) {
         try {
             const addedStory = await Story.create({
                 user: userId[0],
@@ -150,7 +150,7 @@ export class userRepository implements userRepositoryInterface {
                     fileURL: storyData[0].url
                 }]
             })
-            if(addedStory){
+            if (addedStory) {
                 return addedStory
             }
         } catch (error) {
@@ -161,14 +161,14 @@ export class userRepository implements userRepositoryInterface {
     async VideoStory(story: string, userId: string, text: string) {
         try {
             const StoryData = await Story.create({
-                user:userId,
-                files:[{
-                    fileURL:story,
-                    type:'video'
+                user: userId,
+                files: [{
+                    fileURL: story,
+                    type: 'video'
                 }],
                 caption: text
             })
-            if(StoryData){
+            if (StoryData) {
                 return StoryData;
             }
         } catch (error) {
@@ -210,20 +210,20 @@ export class userRepository implements userRepositoryInterface {
         }
     }
 
-    async userProfileEdit( userData: any,userId:string,userImage:any) {
+    async userProfileEdit(userData: any, userId: string, userImage: any) {
         try {
-            console.log( userData,userId,userImage,userData.username);
-            const userRes = await Users.findByIdAndUpdate(userId,{
-                $set:{
-                    bio:userData.bio,
-                    fullName:userData.fullName,
-                    Gender:userData.Gender,
-                    DOB:userData.DOB,
-                    username:userData.username,
-                    image:userImage
+            console.log(userData, userId, userImage, userData.username);
+            const userRes = await Users.findByIdAndUpdate(userId, {
+                $set: {
+                    bio: userData.bio,
+                    fullName: userData.fullName,
+                    Gender: userData.Gender,
+                    DOB: userData.DOB,
+                    username: userData.username,
+                    image: userImage
                 }
-            },{new:true});
-            if(userRes){
+            }, { new: true });
+            if (userRes) {
                 return userRes
             }
         } catch (error) {
@@ -299,8 +299,8 @@ export class userRepository implements userRepositoryInterface {
 
     async ownStory(userId: string) {
         try {
-            const ownstory = await Story.findOne({user:userId}).populate('user');
-            if(ownstory){
+            const ownstory = await Story.findOne({ user: userId }).populate('user');
+            if (ownstory) {
                 return ownstory;
             }
         } catch (error) {
@@ -466,6 +466,19 @@ export class userRepository implements userRepositoryInterface {
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async allMessage(userId: string) {
+        try {
+            const allMessage = await Message.find({ $or: [{ from: userId }, { to: userId }] });
+            console.log(userId) 
+            if (allMessage) {
+                return allMessage
+            }
+            return null
+        } catch (error) {
+            console.log(error)
         }
     }
 

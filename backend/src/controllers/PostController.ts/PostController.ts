@@ -36,6 +36,32 @@ export class PostController {
         }
     }
 
+    async EditPostData (req:Request,res:Response){
+        try {
+            const {postData,Changed} = req.body
+            const EditedPost = await this.PostUsecases.EditPostDetails(postData,Changed);
+            if(EditedPost){
+                return res.status(200).json({EditedPost:EditedPost})
+            }
+            res.status(203).json({message:'Sorry buddy'})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async UserDeletePost(req:Request,res:Response){
+        try {
+            const post = req.query.postData
+            const deletedPostData = await this.PostUsecases.DeleteUserPost(post);
+            if(deletedPostData){
+                return res.status(200).json({message:'Post deleted successfully',deletedPostData})
+            }
+            res.status(203).json({message:'Sorry buddy',deletedPostData})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async VideoUploadPost(req:Request,res:Response){
         try {
             const {text,data} = req.body;

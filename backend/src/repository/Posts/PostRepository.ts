@@ -34,6 +34,38 @@ export class PostRepository implements PostRepositoryInterface {
         }
     }
 
+    async EditPostDetails(postId: any, content: string) {
+        try {
+            console.log(content)
+            const editedPost = await Posts.findByIdAndUpdate(postId._id,{
+                $set:{
+                    content:content
+                }
+            });
+            if(editedPost){
+                console.log(editedPost)
+                return editedPost
+            }
+            return null
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async DeleteUserPost(post: any) {
+        try {
+            const deletedPosted = await Posts.findById(post);
+            if (deletedPosted) {
+                console.log(deletedPosted);
+                deletedPosted.visibile = true
+                deletedPosted.save()
+                return deletedPosted
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async UploadPostDetails(posts: any, postContent: any, user: any) {
         console.log(posts)
         const UploadedDetails = await Posts.insertMany([{

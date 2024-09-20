@@ -27,6 +27,28 @@ export class PostUsecases implements PostUsecasesInterface {
         }
     }
 
+    async EditPostDetails(postId: any, content: string) {
+        try {
+            const changedPost = await this.postRepository.EditPostDetails(postId,content);
+            if (changedPost) {
+                return changedPost
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async DeleteUserPost(post: any) {
+        try {
+            const deletedUserPost = await this.postRepository.DeleteUserPost(post);
+            if (deletedUserPost) {
+                return deletedUserPost
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async ExplorePage() {
         try {
             const ExploreData = await this.postRepository.ExplorePage();

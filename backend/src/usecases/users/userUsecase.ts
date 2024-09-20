@@ -63,6 +63,17 @@ export class userUsecase implements userUsecaseInterface {
         }
     }
 
+    async allMessage(userId:string){
+        try {
+            const allMessages = await this.userRepository.allMessage(userId);
+            if(allMessages){
+                return allMessages
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async userStories(userId: string) {
         try {
             const usersStoryData = await this.userRepository.userStories(userId);
