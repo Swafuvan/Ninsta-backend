@@ -46,6 +46,18 @@ export class AdminControllers {
         }
     }
 
+    async findAllUserPost(req:Request,res:Response){
+        try {
+            const allUserPost = await this.adminUseCases.allUserPost();
+            if (allUserPost) {
+                return res.status(200).json({ allUserPost: allUserPost })
+            }
+            res.status(205).json({ message: "No User Posts" })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async userPostReport(req: Request, res: Response) {
         try {
             const userReport = await this.adminUseCases.userPostReport()

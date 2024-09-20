@@ -11,5 +11,6 @@ export interface adminRepositoryInterface{
     postReportAction(postData:any);
     userReports();
     userReportAction(postData:any);
+    allUserPost();
 
 }

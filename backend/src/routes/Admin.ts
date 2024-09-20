@@ -19,6 +19,8 @@ adminrouter.get('/UserBlock',adminVerfication,adminController.UserBlocking.bind(
 
 adminrouter.get('/adminData',adminVerfication,adminController.adminDetails.bind(adminController));
 
+adminrouter.get('/allUserPost',adminVerfication,adminController.findAllUserPost.bind(adminController))
+
 adminrouter.get('/userfindById',adminVerfication,adminController.UserFindById.bind(adminController));
 
 adminrouter.put('/userReportAction',adminVerfication,adminController.UserReportAction.bind(adminController));

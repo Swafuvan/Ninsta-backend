@@ -10,7 +10,7 @@ export class adminUseCases implements AdminUsecasesInterface {
     async postReportAction(postData: any) {
         try {
             const responseData = await this.adminRepository.postReportAction(postData)
-            if(responseData){
+            if (responseData) {
                 return responseData
             }
         } catch (error) {
@@ -18,10 +18,21 @@ export class adminUseCases implements AdminUsecasesInterface {
         }
     }
 
-async userReportAction(data:any){
+    async allUserPost() {
+        try {
+            const allpostData = await this.adminRepository.allUserPost();
+            if (allpostData) {
+                return allpostData
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async userReportAction(data: any) {
         try {
             const responseData = await this.adminRepository.userReportAction(data)
-            if(responseData){
+            if (responseData) {
                 return responseData
             }
         } catch (error) {
@@ -30,10 +41,10 @@ async userReportAction(data:any){
     }
 
 
-    async userReports(){
+    async userReports() {
         try {
             const userDetails = await this.adminRepository.userReports();
-            if(userDetails){
+            if (userDetails) {
                 return userDetails
             }
         } catch (error) {
@@ -47,7 +58,7 @@ async userReportAction(data:any){
             if (userDetails) {
                 return userDetails
             }
-            
+
         } catch (error) {
             console.log(error)
         }
@@ -115,12 +126,12 @@ async userReportAction(data:any){
         }
     }
 
-    async UserBlocked(userEmail: any,isBlocked:string) {
+    async UserBlocked(userEmail: any, isBlocked: string) {
         try {
-            
+
             console.log(userEmail, isBlocked, '111111111111111111111111111')
-            
-            const UserBlocked = await this.adminRepository.UserBlocked(userEmail,isBlocked)
+
+            const UserBlocked = await this.adminRepository.UserBlocked(userEmail, isBlocked)
             if (UserBlocked) {
                 return UserBlocked
             }

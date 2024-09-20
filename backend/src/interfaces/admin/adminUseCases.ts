@@ -11,4 +11,6 @@ export interface AdminUsecasesInterface{
     postReportAction(postData:any);
     userReports();
     userReportAction(postData:any);
+    allUserPost();
+    
 }
