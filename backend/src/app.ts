@@ -1,14 +1,14 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
-import { ConnectDB } from './src/database';
+import { ConnectDB } from './database';
 import morgan from 'morgan';
 import http from 'http';
-import userRouter from './src/routes/Users';
-import adminRouter from './src/routes/Admin';
+import userRouter from './routes/Users';
+import adminRouter from './routes/Admin';
 import dotenv from 'dotenv';
 import { Server } from 'socket.io';
-import { ConnectToSocket } from './src/helper/socketIO';
+import { ConnectToSocket } from './helper/socketIO';
 
 dotenv.config(); 
 

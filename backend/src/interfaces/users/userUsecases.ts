@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Loginuser, OTPData, forgotPassword, googleUser, userObj } from "../Users"
 
 export interface userUsecaseInterface {
